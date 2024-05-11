@@ -1,0 +1,62 @@
+Konferenčný redakčný systém - CMS
+
+Stručný popis projektu:
+
+Účelom projektu je vytvorenie funkčného prototypu konferenčného reakčného systému. Aplikácia musí byť schopná zvládnuť 2 úrovne prístupu:
+
+    Anonymný - používateľ, ktorý dokáže prezerať obsah prístupný pre verejnosť
+    Administrátor - používateľ schopný vkladať obsah
+
+Uvedený softvér spadá do kategórie Content Management System (CMS) so špecifickým zameraním. Preto je potrebné, aby uvedený systém spĺňal všetky náležitosti ktoré pre tento typ systému sú charakteristické akými sú spravovanie používateľov s administračným prístupom alebo základné úpravy vizuálu atď.
+
+Základné funkčné požiadavky
+
+    Aplikácia musí obsahovať prihlasovanie/registráciu administrátorov
+    Administrátor musí vedieť vykonávať CRUD operácie pre stage
+    Administrátor musí vedieť vykonávať CRUD operácie pre časové okná v existujúcich stagoch
+    Administrátor musí vedieť vykonávať CRUD operácie pre profily speakerov - obrázok/krátky popis/dlhý popis/linky na sociálne siete
+    Administrátor musí vedieť vykonávať CRUD operácie pre prednášky k jednotlivým speakrom - krátky popis/dlhý popis
+    Administrátor musí vedieť prideľovať prednášky do jednotlivých časových slotov
+    Administrátor musí vedieť vytvoriť sponzora
+    Administrátor musí mať možnosť vytvorenia galérie - kategorické rozdelenie na ročníky
+    Používateľ sa musí vedieť zaregistrovať na konferenciu
+    Po registrácii je potrebné aby prišiel registračný email na predvolenú adresu ako aj na adresu používateľa
+    Používateľ sa musí vedieť odhlásiť s konferencie
+    Administrátor musí vedieť kto sa na danú konferenciu zaregistroval
+    Používateľ pri prihlasovaní sa na konferenciu musí mať možnosť výberu s jednotlivých prednášok - validácia časových okien (nedovoliť vybrať 2 prednášky v tom istom čase)
+    Administrátor musí mať možnosť nastavovať kapacitu jednotlivých prednášok - toto sa musí prejavovať aj pri registrácii
+    Administrátor musí vedieť vykonávať CRUD operácie nad sekciou Povedali o nás - foto, výrok
+    Administrátor musí vedieť za pomoci WYSIWYG editora vytvárať custom stránky - príklad Ochrana osobných údajov
+    Všetky obsahové sekcie ktoré administrátor vie vytvoriť musia byť prístupné pre používateľov
+
+
+Nefunkčné požiadavky
+
+- Projekt musí byť zobraziteľný na všetkých štandardizovaných zariadeniach - musí byť responzívny
+
+- Projekt musí fungovať ako webová aplikácia
+
+- Projekt musí byť naprogramovaný v Laravel 10.*
+
+- Projekt musí byť spustiteľný na serveri Apache 2.4
+
+- Projekt musí byť kompatibilný s minimálne PHP 8.2.*
+
+- Ako databázová platforma musí byť využitá MySQL 8.0.* alebo MariaDB 10.5.* a viac
+
+- Je povolené používať cachovací mechanizmus v podobe Redisu
+
+- UI časť musí byť navrhnutá v FE frameworku, odporúčaný je Vue.js 3.*
+
+Vizualizácia aktuálneho riešenia
+
+https://nconnect.sk/
+
+
+Spôsob hodnotenia:
+
+    Inštalácia a konfigurácia prostredia - 5 bodov
+    Správny spôsob definovania databázovej vrstvy (migrácie, seedy) - 10 bodov
+    Komplexné využitie RESTful architektúry (oddelenie vizuálu do externej aplikácie, modely budú obsahovať len business logiku atď.) - 50 bodov
+    Využitie Vue.js pri tvorbe vizuálneho UI - 20 bodov
+    Úplne splnenie akceptačných kritérií na danú aplikáciu (aby aplikácia robila to čo má) - 15 bodov
