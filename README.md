@@ -20,13 +20,13 @@ and immediately after:
 ``` console
 php artisan key:generate
 ```
-You should receive **" INFO  Application key set successfully. "**. If you navigate to the browser, you should now be able to access the index.php page of Laravel.
-5. In the terminal, navigate to "Application/FrontEnd".
+You should receive **" INFO  Application key set successfully. "**. If you navigate to the browser, you should now be able to access the index.php page of Laravel.\
+5. In the terminal, navigate to "Application/FrontEnd".\
 6. In the terminal, enter:
 ``` console
 npm install
 ```
-If an error occurs, delete the "package-lock.json" file and run the installation again.
+If an error occurs, delete the "package-lock.json" file and run the installation again.\
 7. To start the page, enter:
 ``` console
 npm run dev
