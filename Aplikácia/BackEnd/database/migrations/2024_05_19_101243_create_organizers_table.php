@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('organizers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('title_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('title_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('first_name_id')->constrained()->onDelete('cascade');
-            $table->foreignId('middle_name_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('middle_name_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('last_name_id')->constrained()->onDelete('cascade');
             $table->enum('position', ['main', 'voluntary'])->default('voluntary');
             $table->boolean('publish')->default(false);
-            $table->foreignId('email_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('email_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('phone_number',20)->nullable();
             $table->text('comment')->nullable();
             $table->timestamps();

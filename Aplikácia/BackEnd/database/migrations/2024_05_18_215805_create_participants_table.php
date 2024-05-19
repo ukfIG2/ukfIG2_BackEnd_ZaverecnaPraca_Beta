@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('participants', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('title_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('title_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('first_name_id')->constrained()->onDelete('cascade');
-            $table->foreignId('middle_name_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('middle_name_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('last_name_id')->constrained()->onDelete('cascade');
-            $table->foreignId('company_id')->constrained()->onDelete('cascade')->nullable();
-            $table->foreignId('position_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('company_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('position_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('email_id')->constrained()->onDelete('cascade');
             $table->string('token_link');
             $table->text('comment')->nullable();

@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('speakers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('title_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('title_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('first_name_id')->constrained()->onDelete('cascade');
-            $table->foreignId('middle_name_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('middle_name_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('last_name_id')->constrained()->onDelete('cascade');
-            $table->foreignId('company_id')->constrained()->onDelete('cascade')->nullable();
-            $table->foreignId('position_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('company_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('position_id')->nullable()->constrained()->onDelete('cascade');
             $table->text('short_description')->nullable();
             $table->text('long_description')->nullable();
             $table->text('comment')->nullable();

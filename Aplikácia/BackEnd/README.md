@@ -32,7 +32,7 @@ https://github.com/beyondcode/laravel-er-diagram-generator
 
 
 ## Common naming practices
-**Tables should be singluar, lower-case and use "_".**
-**Models should be singluar and first letter capital.**
-**In model relationship "belongs to" should be singluar lower case.**
+**Tables should be singluar, lower-case and use "_".**\
+**Models should be singluar and first letter capital.**\
+**In model relationship "belongs to" should be singluar lower case.**\
 **In model relationship "has many" should be pluar lower case.**

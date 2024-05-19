@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('conference_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->string('url')->nullable();
-            $table->foreignId('image_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('image_id')->nullable()->constrained()->onDelete('cascade');
             $table->text('comment')->nullable();
             $table->timestamps();
         });

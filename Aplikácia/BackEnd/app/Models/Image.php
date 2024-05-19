@@ -33,6 +33,6 @@ class Image extends Model
 
     public function speakers()
     {
-        return $this->hasMany(Speaker::class);
+        return $this->belongsToMany(Speaker::class, 'bridge_speaker_image');
     }
 }
