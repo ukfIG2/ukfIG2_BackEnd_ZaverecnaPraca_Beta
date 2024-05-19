@@ -5,19 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Stage extends Model
+class Sponsor extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['conference_id', 'name', 'comment'];
+    protected $fillable = ['conference_id', 'name', 'url', 'image_id', 'comment'];
 
     public function conference()
     {
         return $this->belongsTo(Conference::class);
     }
 
-    public function time_tables()
+    public function image()
     {
-        return $this->hasMany(Time_table::class);
+        return $this->belongsTo(Image::class);
     }
 }

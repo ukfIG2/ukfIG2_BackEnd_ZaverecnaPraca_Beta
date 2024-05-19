@@ -11,4 +11,13 @@ class Time_table extends Model
 
     protected $fillable = ['stage_id', 'time_start', 'time_end', 'comment'];
 
+    public function stage()
+    {
+        return $this->belongsTo(Stage::class);
+    }
+
+    public function presentations()
+    {
+        return $this->hasMany(Presentation::class);
+    }
 }
