@@ -28,7 +28,9 @@ php artisan model:show ModelName
 
 ## ER diaram generator from
 https://github.com/beyondcode/laravel-er-diagram-generator
-
+``` console
+php artisan generate:erd output.png
+```
 
 
 ## Common naming practices
