@@ -39,7 +39,9 @@ class ConferenceController extends Controller
 
         $conference->save();
 
-        return response()->json('Conference Created Successfully.');
+        //return response()->json('Conference Created Successfully.');
+        return response()->json(['message' => 'Conference Created Successfully.'], 201);
+
     }
     
     public function show($id)

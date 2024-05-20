@@ -40,6 +40,21 @@ php artisan make:controller NameController
 php artisan make:controller NameController --model=NameModel
 ```
 
+## Make test
+``` console
+php artisan make:test NameTest
+```
+
+## Run test
+``` console
+php artisan test
+```
+
+## Run specific test
+``` console
+php artisan test --filter testStore
+```
+
 ## Common naming practices
 **Tables should be singluar, lower-case and use "_".**\
 **Models should be singluar and first letter capital.**\

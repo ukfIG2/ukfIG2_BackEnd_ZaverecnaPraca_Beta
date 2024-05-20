@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->date('date');
-            $table->enum('state', ['prepearing', 'in_progress', 'ended'])->default('prepearing');
+            $table->enum('state', ['preparing', 'in_progress', 'ended'])->default('preparing');
             $table->text('comment')->nullable();
             $table->string('address_of_conference')->nullable();
             $table->timestamps();
