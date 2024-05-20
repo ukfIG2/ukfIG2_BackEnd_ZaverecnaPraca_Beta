@@ -31,7 +31,14 @@ https://github.com/beyondcode/laravel-er-diagram-generator
 ``` console
 php artisan generate:erd output.png
 ```
-
+## Make controller
+``` console
+php artisan make:controller NameController
+```
+**This will make basic crud operations for your model and use your model.**
+``` console
+php artisan make:controller NameController --model=NameModel
+```
 
 ## Common naming practices
 **Tables should be singluar, lower-case and use "_".**\
