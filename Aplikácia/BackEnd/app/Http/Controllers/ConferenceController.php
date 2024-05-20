@@ -32,7 +32,7 @@ class ConferenceController extends Controller
         $conference = new Conference([
             'name' => $request->get('name'),
             'date' => $request->get('date'),
-            'state' => 'prepearing',
+            'state' => 'preparing',
             'comment' => $request->get('comment'),
             'address_of_conference' => $request->get('address'),
         ]);
@@ -41,34 +41,66 @@ class ConferenceController extends Controller
 
         return response()->json('Conference Created Successfully.');
     }
-
-
-    public function show(Conference $conference)
+    
+    public function show($id)
     {
-        //
-    }
+        // Find the conference by its ID
+        $conference = Conference::find($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+        // If the conference was not found, return a 404 error
+        if (!$conference) {
+            return response()->json(['message' => 'Conference not found'], 404);
+        }
+
+        // Return the conference data
+        return response()->json($conference);
+    }
+    
     public function edit(Conference $conference)
     {
         //Using Vue3.
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Conference $conference)
+    public function update(Request $request, $id)
     {
-        //
-    }
+        // Validate the request data
+        $request->validate([
+            'name' => 'required|max:255',
+            'date' => 'required|date',
+            'state' => 'required|string',
+            'comment' => 'nullable|string',
+            'address_of_conference' => 'nullable|string',
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Conference $conference)
+        // Find the conference by its ID
+        $conference = Conference::find($id);
+
+        // If the conference was not found, return a 404 error
+        if (!$conference) {
+            return response()->json(['message' => 'Conference not found'], 404);
+        }
+
+        // Update the conference with the request data
+        $conference->update($request->all());
+
+        // Return the updated conference
+        return response()->json($conference);
+    }
+    
+    public function destroy($id)
     {
-        //
+        // Find the conference by its ID
+        $conference = Conference::find($id);
+
+        // If the conference was not found, return a 404 error
+        if (!$conference) {
+            return response()->json(['message' => 'Conference not found'], 404);
+        }
+
+        // Delete the conference
+        $conference->delete();
+
+        // Return a success message
+        return response()->json(['message' => 'Conference deleted successfully']);
     }
 }
