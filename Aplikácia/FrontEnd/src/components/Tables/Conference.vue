@@ -109,8 +109,8 @@
               <td>{{ conference.comment }}</td>
               <td>{{ conference.address_of_conference }}</td>
               <td>
-                <button class="btn btn-primary" @click="editConference(conference)">Zmeniť niečo na konferencií</button>
-                <button class="btn btn-danger" @click="deleteConference(conference.id)">Vymazať konferenciu</button>
+                <button class="btn btn-primary m-2" @click="editConference(conference)">Zmeniť niečo na konferencií</button>
+                <button class="btn btn-danger m-2" @click="deleteConference(conference.id)">Vymazať konferenciu</button>
               </td>
             </tr>
           </tbody>
