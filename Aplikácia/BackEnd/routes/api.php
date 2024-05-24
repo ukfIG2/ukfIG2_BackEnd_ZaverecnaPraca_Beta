@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\ConferenceController;
+use App\Http\Controllers\StageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,3 +26,10 @@ Route::post('/conferences', [ConferenceController::class, 'store']);
 Route::get('/conferences/{id}', [ConferenceController::class, 'show']);
 Route::put('/conferences/{id}', [ConferenceController::class, 'update']);
 Route::delete('/conferences/{id}', [ConferenceController::class, 'destroy']);
+
+Route::get('/stages', [StageController::class, 'index']);
+Route::post('/stages', [StageController::class, 'store']);
+Route::get('/stages/{id}', [StageController::class, 'show']);
+Route::put('/stages/{id}', [StageController::class, 'update']);
+Route::delete('/stages/{id}', [StageController::class, 'destroy']);
+

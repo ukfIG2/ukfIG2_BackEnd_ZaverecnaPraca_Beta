@@ -16,13 +16,15 @@
 <script lang="ts">
 // Import all the table components
 import Conference_table from '../components/Tables/Conference.vue'
+import Stage_table from '../components/Tables/Stage.vue'
 
 
 // Define the component
 
 export default {
   components: {
-    Conference_table
+    Conference_table,
+    Stage_table
   
 
     // Add other components as needed
