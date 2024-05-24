@@ -36,7 +36,7 @@ class ConferenceControllerTest extends TestCase
     {
         $conferenceData = [
             'name' => 'Test Conference 02',
-            'date' => '2022-12-31',
+            'date' => '2024-12-31',
         ];
     
         $response = $this->postJson('/api/conferences', $conferenceData);
@@ -45,7 +45,7 @@ class ConferenceControllerTest extends TestCase
     
         $this->assertDatabaseHas('conferences', [
             'name' => 'Test Conference 02',
-            'date' => '2022-12-31',
+            'date' => '2024-12-31',
             'state' => 'preparing',
             'comment' => null,
             'address_of_conference' => null,
@@ -106,7 +106,7 @@ class ConferenceControllerTest extends TestCase
     // Define the new data
     $newData = [
         'name' => 'Test Conference 02',
-        'date' => '2022-12-31',
+        'date' => '2025-12-31',
         'state' => 'in_progress',   
         'comment' => 'Test Comment',
     ];
@@ -123,12 +123,12 @@ class ConferenceControllerTest extends TestCase
     $this->assertDatabaseHas('conferences', array_merge(['id' => $conferenceId], $newData));
 }
 
-public function testAdress()
+public function testEdit()
 {
     // Define the initial data
     $initialData = [
         'name' => 'Test Conference 3',
-        'date' => '2022-12-31',
+        'date' => '2026-12-31',
         'address_of_conference' => 'Test Address',
     ];
 
@@ -144,7 +144,7 @@ public function testAdress()
     // Define the new data
     $newData = [
         'name' => 'Test Conference 03',
-        'date' => '2022-12-31',
+        'date' => '2026-12-31',
         'state' => 'ended',
         'address_of_conference' => 'Test Address',
     ];
