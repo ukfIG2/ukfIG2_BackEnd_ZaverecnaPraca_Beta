@@ -1,0 +1,207 @@
+<template>
+    <div>
+      <!-- Button to trigger the modal -->
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#timetableModal">
+        Add timetable
+      </button>
+  
+      <!-- Modal for adding a new timetable -->
+      <div class="modal fade" id="timetableModal" tabindex="-1" aria-labelledby="timetableModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="timetableModalLabel">Add timetable</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <!-- Form for adding a new timetable -->
+              <form @submit.prevent="submitForm">
+                <div class="mb-3">
+                  <label for="stage_id" class="form-label">Stage ID</label>
+                  <input type="number" class="form-control" id="stage_id" v-model="newTimetable.stage_id" required/>
+                </div>
+                <div class="mb-3">
+                  <label for="time_start" class="form-label">Start Time</label>
+                  <input type="time" class="form-control" id="time_start" v-model="newTimetable.time_start" required/>
+                </div>
+                <div class="mb-3">
+                  <label for="time_end" class="form-label">End Time</label>
+                  <input type="time" class="form-control" id="time_end" v-model="newTimetable.time_end" required/>
+                </div>
+                <div class="mb-3">
+                  <label for="comment" class="form-label">Comment</label>
+                  <input type="text" class="form-control" id="comment" v-model="newTimetable.comment" placeholder="Add comment">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="submitForm">Create timetable</button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Modal for editing a timetable -->
+      <div class="modal fade" id="editTimetableModal" tabindex="-1" aria-labelledby="editTimetableModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editTimetableModalLabel">Edit timetable</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <!-- Form for editing a timetable -->
+              <form v-if="editingTimetable" @submit.prevent="submitEditForm">
+                <div class="mb-3">
+                  <label for="stage_id" class="form-label">Stage ID</label>
+                  <input type="number" class="form-control" id="stage_id" v-model="editingTimetable.stage_id" required/>
+                </div>
+                <div class="mb-3">
+                  <label for="time_start" class="form-label">Start Time</label>
+                  <input type="time" class="form-control" id="time_start" v-model="editingTimetable.time_start" required/>
+                </div>
+                <div class="mb-3">
+                  <label for="time_end" class="form-label">End Time</label>
+                  <input type="time" class="form-control" id="time_end" v-model="editingTimetable.time_end" required/>
+                </div>
+                <div class="mb-3">
+                  <label for="comment" class="form-label">Comment</label>
+                  <input type="text" class="form-control" id="comment" v-model="editingTimetable.comment" placeholder="Add comment">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="submitEditForm">Edit timetable</button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Table to display the list of timetables -->
+      <div class="container">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Stage ID</th>
+                <th scope="col">Start Time</th>
+                <th scope="col">End Time</th>
+                <th scope="col">Comment</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Loop through the list of timetables and display each one in a table row -->
+              <tr v-for="timetable in timetables" :key="timetable.id">
+                <th scope="row">{{ timetable.id }}</th>
+                <td>{{ timetable.stage_id }}</td>
+                <td>{{ timetable.time_start }}</td>
+                <td>{{ timetable.time_end }}</td>
+                <td>{{ timetable.comment }}</td>
+                <td>
+                  <button class="btn btn-primary m-2" @click="editTimetable(timetable)">Edit timetable</button>
+                  <button class="btn btn-danger m-2" @click="deleteTimetable(timetable.id)">Delete timetable</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </template>
+  
+  <script lang="ts">
+  import { defineComponent } from 'vue';
+  import axios from 'axios';
+  import { Modal } from 'bootstrap';
+  
+  interface Timetable {
+    id: number;
+    stage_id: number;
+    time_start: string;
+    time_end: string;
+    comment?: string;
+  }
+  
+  const API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/time_tables';
+  
+  export default defineComponent({
+    name: 'Timetable',
+    data() {
+      return {
+        timetables: [] as Timetable[],
+        newTimetable: {
+          stage_id: 0,
+          time_start: '',
+          time_end: '',
+          comment: '',
+        },
+        editingTimetable: null as Timetable | null,
+        addModal: null as Modal | null,
+        editModal: null as Modal | null,
+      };
+    },
+    async mounted() {
+      const addModalElement = document.getElementById('timetableModal');
+      const editModalElement = document.getElementById('editTimetableModal');
+  
+      if (!addModalElement || !editModalElement) {
+        throw new Error('Modal elements not found');
+      }
+  
+      this.addModal = new Modal(addModalElement);
+      this.editModal = new Modal(editModalElement);
+  
+      this.timetables = await this.fetchTimetables();
+    },
+    methods: {
+      async fetchTimetables() {
+        const response = await axios.get(API_ENDPOINT);
+        return response.data;
+      },
+      async submitForm() {
+        if (!this.newTimetable.stage_id || !this.newTimetable.time_start || !this.newTimetable.time_end) {
+          alert('Please fill in all required fields.');
+          return;
+        }
+        await axios.post(API_ENDPOINT, this.newTimetable);
+        this.newTimetable = {
+          stage_id: 0,
+          time_start: '',
+          time_end: '',
+          comment: '',
+        };
+        this.timetables = await this.fetchTimetables();
+      },
+      editTimetable(timetable: Timetable) {
+        this.editingTimetable = { ...timetable };
+        this.editModal?.show();
+      },
+      async submitEditForm() {
+        if (!this.editingTimetable) {
+          return;
+        }
+  
+        try {
+          await axios.put(`${API_ENDPOINT}/${this.editingTimetable.id}`, this.editingTimetable);
+          this.editingTimetable = null;
+          this.timetables = await this.fetchTimetables();
+        } catch (error) {
+          console.error('Failed to update timetable:', error);
+        }
+        this.editModal?.hide();
+      },
+      async deleteTimetable(id: number) {
+        try {
+          await axios.delete(`${API_ENDPOINT}/${id}`);
+          this.timetables = await this.fetchTimetables();
+        } catch (error) {
+          console.error('Failed to delete timetable:', error);
+        }
+      },
+    },
+  });
+  </script>

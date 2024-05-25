@@ -17,6 +17,7 @@
 // Import all the table components
 import Conference_table from '../components/Tables/Conference.vue'
 import Stage_table from '../components/Tables/Stage.vue'
+import Time_table from '../components/Tables/Time_table.vue'
 
 
 // Define the component
@@ -24,7 +25,8 @@ import Stage_table from '../components/Tables/Stage.vue'
 export default {
   components: {
     Conference_table,
-    Stage_table
+    Stage_table,
+    Time_table
   
 
     // Add other components as needed

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\ConferenceController;
 use App\Http\Controllers\StageController;
+use App\Http\Controllers\Time_tableController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,3 +34,8 @@ Route::get('/stages/{id}', [StageController::class, 'show']);
 Route::put('/stages/{id}', [StageController::class, 'update']);
 Route::delete('/stages/{id}', [StageController::class, 'destroy']);
 
+Route::get('/time_tables', [Time_tableController::class, 'index']);
+Route::post('/time_tables', [Time_tableController::class, 'store']);
+Route::get('/time_tables/{id}', [Time_tableController::class, 'show']);
+Route::put('/time_tables/{id}', [Time_tableController::class, 'update']);
+Route::delete('/time_tables/{id}', [Time_tableController::class, 'destroy']);
