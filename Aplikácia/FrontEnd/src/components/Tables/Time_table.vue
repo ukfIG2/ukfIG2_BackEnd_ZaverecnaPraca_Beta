@@ -18,15 +18,18 @@
               <form @submit.prevent="submitForm">
                 <div class="mb-3">
                     <label for="conference_id" class="form-label">Conference</label>
-                    <select class="form-control" id="conference_id" v-model="newTimetable.conference_id" required>
-                    <option v-for="conference in conferences" :value="conference.id">{{ conference.name }} - {{ conference.date }}</option>
+                    <select class="form-control" id="conferenceSelector" v-model="newStage">
+                      <option v-for="conference in conferences" :key="conference.id" :value="conference">
+                        {{ conference.name }} - {{ conference.date }}
+                      </option>
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="stage_id" class="form-label">Stage</label>
-                    <select class="form-control" id="stage_id" v-model="newTimetable.stage_id" required>
-                    <option v-for="stage in stages" :value="stage.id">{{ getConferenceName(stage.conference_id) }} - {{ stage.name }}</option>
-                    </select>
+                  <select class="form-control" id="stageSelector" v-model="newTimetable.stage_id">
+                    <option v-for="stage in filteredStages" :key="stage.id" :value="stage.id">
+                      {{ stage.name }}
+                    </option>
+                  </select>
                 </div>
                 <div class="mb-3">
                   <label for="time_start" class="form-label">Start Time</label>
@@ -63,15 +66,18 @@
               <form v-if="editingTimetable" @submit.prevent="submitEditForm">
                 <div class="mb-3">
                     <label for="conference_id" class="form-label">Conference</label>
-                    <select class="form-control" id="conference_id" v-model="editingTimetable.conference_id" required>
-                    <option v-for="conference in conferences" :value="conference.id">{{ conference.name }} - {{ conference.date }}</option>
+                    <select class="form-control" id="conferenceSelector" v-model="newStage">
+                      <option v-for="conference in conferences" :key="conference.id" :value="conference">
+                        {{ conference.name }} - {{ conference.date }}
+                      </option>
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="stage_id" class="form-label">Stage</label>
-                    <select class="form-control" id="stage_id" v-model="editingTimetable.stage_id" required>
-                    <option v-for="stage in stages" :value="stage.id">{{ getConferenceName(stage.conference_id) }} - {{ stage.name }}</option>
-                    </select>
+                  <select class="form-control" id="stageSelector" v-model="newTimetable.stage_id">
+                    <option v-for="stage in filteredStages" :key="stage.id" :value="stage.id">
+                      {{ stage.name }}
+                    </option>
+                  </select>
                 </div>
                 <div class="mb-3">
                   <label for="time_start" class="form-label">Start Time</label>
@@ -135,6 +141,7 @@
   import { defineComponent } from 'vue';
   import axios from 'axios';
   import { Modal } from 'bootstrap';
+  import { watch } from 'vue';
   
   interface Timetable {
     id: number;
@@ -164,6 +171,7 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
     name: 'Timetable',
     data() {
       return {
+        newStage: null as Stage | null,
         timetables: [] as Timetable[],
         stages: [] as Stage[],
         conferences: [] as Conference[],
@@ -198,23 +206,21 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
     methods: {
     async fetchTimetables() {
       const response = await axios.get(TIMETABLE_API_ENDPOINT);
-        console.log(response.data);
+        //console.log(response.data);
       return response.data;
     },
     async fetchStages() {
       const response = await axios.get(STAGE_API_ENDPOINT);
-      console.log(response.data);
+      //console.log(response.data);
       return response.data;
     },
     async fetchConferences() {
       const response = await axios.get('http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/conferences');
-      console.log(response.data); // Log the response data
+      //console.log(response.data); // Log the response data
       return response.data;
     },
     getConferenceName(stageId: number) {
-        console.log("stage_id" + stageId);
       const stage = this.stages.find(stage => stage.id === stageId);
-      console.log(stage);
       if (!stage) {
           return 'Unknown conference';
       }
@@ -240,6 +246,7 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
           comment: '',
         };
         this.timetables = await this.fetchTimetables();
+        console.log("totok" + this.timetables);
       },
       editTimetable(timetable: Timetable) {
         this.editingTimetable = { ...timetable };
@@ -269,6 +276,11 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
       },
     },
     computed: {
+      filteredStages(): Stage[] {
+  const filtered = this.stages.filter(stage => this.newStage && stage.conference_id == this.newStage.id);
+  console.log("filtered " + filtered); // Log the filtered stages
+  return filtered;
+},
   timetablesWithConferenceNames() {
     return this.timetables.map(timetable => {
       // Find the corresponding stage
@@ -290,5 +302,10 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
     });
   },
 },
+  watch: {
+    newStage() {
+      this.filteredStages;
+    },
+  },
   });
   </script>
