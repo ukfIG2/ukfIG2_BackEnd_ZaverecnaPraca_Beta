@@ -17,8 +17,16 @@
               <!-- Form for adding a new timetable -->
               <form @submit.prevent="submitForm">
                 <div class="mb-3">
-                  <label for="stage_id" class="form-label">Stage ID</label>
-                  <input type="number" class="form-control" id="stage_id" v-model="newTimetable.stage_id" required/>
+                    <label for="conference_id" class="form-label">Conference</label>
+                    <select class="form-control" id="conference_id" v-model="newTimetable.conference_id" required>
+                    <option v-for="conference in conferences" :value="conference.id">{{ conference.name }} - {{ conference.date }}</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="stage_id" class="form-label">Stage</label>
+                    <select class="form-control" id="stage_id" v-model="newTimetable.stage_id" required>
+                    <option v-for="stage in stages" :value="stage.id">{{ getConferenceName(stage.conference_id) }} - {{ stage.name }}</option>
+                    </select>
                 </div>
                 <div class="mb-3">
                   <label for="time_start" class="form-label">Start Time</label>
@@ -54,8 +62,16 @@
               <!-- Form for editing a timetable -->
               <form v-if="editingTimetable" @submit.prevent="submitEditForm">
                 <div class="mb-3">
-                  <label for="stage_id" class="form-label">Stage ID</label>
-                  <input type="number" class="form-control" id="stage_id" v-model="editingTimetable.stage_id" required/>
+                    <label for="conference_id" class="form-label">Conference</label>
+                    <select class="form-control" id="conference_id" v-model="editingTimetable.conference_id" required>
+                    <option v-for="conference in conferences" :value="conference.id">{{ conference.name }} - {{ conference.date }}</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="stage_id" class="form-label">Stage</label>
+                    <select class="form-control" id="stage_id" v-model="editingTimetable.stage_id" required>
+                    <option v-for="stage in stages" :value="stage.id">{{ getConferenceName(stage.conference_id) }} - {{ stage.name }}</option>
+                    </select>
                 </div>
                 <div class="mb-3">
                   <label for="time_start" class="form-label">Start Time</label>
@@ -138,6 +154,7 @@
   interface Conference {
     id: number;
     name: string;
+    date: string;
     }
   
 const TIMETABLE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/time_tables';
@@ -151,6 +168,7 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
         stages: [] as Stage[],
         conferences: [] as Conference[],
         newTimetable: {
+          conference_id: 0,
           stage_id: 0,
           time_start: '',
           time_end: '',
@@ -215,6 +233,7 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
         await axios.post(TIMETABLE_API_ENDPOINT, this.newTimetable);
         //await axios.post(STAGE_API_ENDPOINT, this.newTimetable);
         this.newTimetable = {
+          conference_id: 0,
           stage_id: 0,
           time_start: '',
           time_end: '',
