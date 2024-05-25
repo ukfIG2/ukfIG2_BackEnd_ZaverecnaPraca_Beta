@@ -86,7 +86,8 @@
             <thead>
               <tr>
                 <th scope="col">#</th>
-                <th scope="col">Stage ID</th>
+                <th scope="col">Conference</th> <!-- Add this line -->
+                <th scope="col">Stage</th>
                 <th scope="col">Start Time</th>
                 <th scope="col">End Time</th>
                 <th scope="col">Comment</th>
@@ -95,17 +96,18 @@
             </thead>
             <tbody>
               <!-- Loop through the list of timetables and display each one in a table row -->
-              <tr v-for="timetable in timetables" :key="timetable.id">
-                <th scope="row">{{ timetable.id }}</th>
-                <td>{{ timetable.stage_id }}</td>
+              <tr v-for="timetable in timetablesWithConferenceNames" :key="timetable.id">
+                <th scope="r  ow">{{ timetable.id }}</th>
+                <td>{{ timetable.conference_name }}</td>
+                <td>{{ getStageName(timetable.stage_id) }}</td>
                 <td>{{ timetable.time_start }}</td>
                 <td>{{ timetable.time_end }}</td>
                 <td>{{ timetable.comment }}</td>
                 <td>
-                  <button class="btn btn-primary m-2" @click="editTimetable(timetable)">Edit timetable</button>
-                  <button class="btn btn-danger m-2" @click="deleteTimetable(timetable.id)">Delete timetable</button>
+                    <button class="btn btn-primary m-2" @click="editTimetable(timetable)">Edit timetable</button>
+                    <button class="btn btn-danger m-2" @click="deleteTimetable(timetable.id)">Delete timetable</button>
                 </td>
-              </tr>
+                </tr>
             </tbody>
           </table>
         </div>
@@ -120,19 +122,34 @@
   
   interface Timetable {
     id: number;
+    conference_id: number; // Add this line
     stage_id: number;
     time_start: string;
     time_end: string;
     comment?: string;
   }
+
+  interface Stage {
+    id: number;
+    name: string;
+    conference_id: number;
+  }
+
+  interface Conference {
+    id: number;
+    name: string;
+    }
   
-  const API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/time_tables';
-  
+const TIMETABLE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/time_tables';
+const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/stages';  
+
   export default defineComponent({
     name: 'Timetable',
     data() {
       return {
         timetables: [] as Timetable[],
+        stages: [] as Stage[],
+        conferences: [] as Conference[],
         newTimetable: {
           stage_id: 0,
           time_start: '',
@@ -156,18 +173,47 @@
       this.editModal = new Modal(editModalElement);
   
       this.timetables = await this.fetchTimetables();
+      this.stages = await this.fetchStages();
+      this.conferences = await this.fetchConferences();
+      
     },
     methods: {
-      async fetchTimetables() {
-        const response = await axios.get(API_ENDPOINT);
-        return response.data;
-      },
+    async fetchTimetables() {
+      const response = await axios.get(TIMETABLE_API_ENDPOINT);
+        console.log(response.data);
+      return response.data;
+    },
+    async fetchStages() {
+      const response = await axios.get(STAGE_API_ENDPOINT);
+      console.log(response.data);
+      return response.data;
+    },
+    async fetchConferences() {
+      const response = await axios.get('http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/conferences');
+      console.log(response.data); // Log the response data
+      return response.data;
+    },
+    getConferenceName(stageId: number) {
+        console.log("stage_id" + stageId);
+      const stage = this.stages.find(stage => stage.id === stageId);
+      console.log(stage);
+      if (!stage) {
+          return 'Unknown conference';
+      }
+      const conference = this.conferences.find(conference => conference.id === stage.conference_id);
+      return conference ? conference.name : 'Unknown conference';
+    },
+    getStageName(stageId: number) {
+      const stage = this.stages.find(stage => stage.id === stageId);
+      return stage ? stage.name : 'Unknown stage';
+    },
       async submitForm() {
         if (!this.newTimetable.stage_id || !this.newTimetable.time_start || !this.newTimetable.time_end) {
           alert('Please fill in all required fields.');
           return;
         }
-        await axios.post(API_ENDPOINT, this.newTimetable);
+        await axios.post(TIMETABLE_API_ENDPOINT, this.newTimetable);
+        //await axios.post(STAGE_API_ENDPOINT, this.newTimetable);
         this.newTimetable = {
           stage_id: 0,
           time_start: '',
@@ -186,7 +232,7 @@
         }
   
         try {
-          await axios.put(`${API_ENDPOINT}/${this.editingTimetable.id}`, this.editingTimetable);
+          await axios.put(`${STAGE_API_ENDPOINT}/${this.editingTimetable.id}`, this.editingTimetable);
           this.editingTimetable = null;
           this.timetables = await this.fetchTimetables();
         } catch (error) {
@@ -196,12 +242,34 @@
       },
       async deleteTimetable(id: number) {
         try {
-          await axios.delete(`${API_ENDPOINT}/${id}`);
+          await axios.delete(`${STAGE_API_ENDPOINT}/${id}`);
           this.timetables = await this.fetchTimetables();
         } catch (error) {
           console.error('Failed to delete timetable:', error);
         }
       },
     },
+    computed: {
+  timetablesWithConferenceNames() {
+    return this.timetables.map(timetable => {
+      // Find the corresponding stage
+      const stage = this.stages.find(s => s.id === timetable.stage_id);
+      // If the stage is not found, return the timetable with 'Unknown conference' as the conference name
+      if (!stage) {
+        return {
+          ...timetable,
+          conference_name: 'Unknown conference',
+        };
+      }
+      // Find the corresponding conference
+      const conference = this.conferences.find(c => c.id === stage.conference_id);
+      // Return a new object that includes the conference name
+      return {
+        ...timetable,
+        conference_name: conference ? conference.name : 'Unknown conference',
+      };
+    });
+  },
+},
   });
   </script>
