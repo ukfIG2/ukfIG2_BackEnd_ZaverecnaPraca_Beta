@@ -87,7 +87,7 @@ class StageControllerTest extends TestCase
 
         $response->assertStatus(201);
 
-        $conferenceId = 3;
+        $stageId = 3;
 
         $stageData = [
             'name' => 'Test Stage 04_2',
@@ -95,7 +95,7 @@ class StageControllerTest extends TestCase
             'conference_id' => 1,
         ];
 
-        $response = $this->putJson('/api/stages/' . $conferenceId, $stageData);
+        $response = $this->putJson('/api/stages/' . $stageId, $stageData);
 
         //$response->dump(); // Print the response to the console
 
@@ -107,6 +107,6 @@ class StageControllerTest extends TestCase
 
         $response->assertStatus(200);
 
-        $response = $this->get('/api/stages/' . $conferenceId);
+        $response = $this->get('/api/stages/' . $stageId);
     }
 }
