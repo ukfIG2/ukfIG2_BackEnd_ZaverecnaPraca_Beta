@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConferenceController;
 use App\Http\Controllers\StageController;
 use App\Http\Controllers\Time_tableController;
+use App\Http\Controllers\PresentationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,3 +40,9 @@ Route::post('/time_tables', [Time_tableController::class, 'store']);
 Route::get('/time_tables/{id}', [Time_tableController::class, 'show']);
 Route::put('/time_tables/{id}', [Time_tableController::class, 'update']);
 Route::delete('/time_tables/{id}', [Time_tableController::class, 'destroy']);
+
+Route::get('/presentations', [PresentationController::class, 'index']);
+Route::post('/presentations', [PresentationController::class, 'store']);
+Route::get('/presentations/{id}', [PresentationController::class, 'show']);
+Route::put('/presentations/{id}', [PresentationController::class, 'update']);
+Route::delete('/presentations/{id}', [PresentationController::class, 'destroy']);
