@@ -145,11 +145,10 @@
   
   interface Timetable {
     id: number;
-    conference_id: number; // Add this line
     stage_id: number;
     time_start: string;
     time_end: string;
-    comment?: string;
+    comment: string;
   }
 
   interface Stage {
@@ -176,13 +175,18 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
         stages: [] as Stage[],
         conferences: [] as Conference[],
         newTimetable: {
-          conference_id: 0,
           stage_id: 0,
           time_start: '',
           time_end: '',
           comment: '',
         },
-        editingTimetable: null as Timetable | null,
+        editingTimetable: {
+          id: 0,
+          stage_id: 0,
+          time_start: '',
+          time_end: '',
+          comment: '',
+        },
         addModal: null as Modal | null,
         editModal: null as Modal | null,
       };
@@ -239,7 +243,7 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
         await axios.post(TIMETABLE_API_ENDPOINT, this.newTimetable);
         //await axios.post(STAGE_API_ENDPOINT, this.newTimetable);
         this.newTimetable = {
-          conference_id: 0,
+          //conference_id: 0,
           stage_id: 0,
           time_start: '',
           time_end: '',
@@ -249,17 +253,25 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
         console.log("totok" + this.timetables);
       },
       editTimetable(timetable: Timetable) {
-        this.editingTimetable = { ...timetable };
+        this.editingTimetable = {
+          id: timetable.id,
+          //conference_id: timetable.conference_id,
+          stage_id: null as any,
+          time_start: timetable.time_start,
+          time_end: timetable.time_end,
+          comment: timetable.comment,
+        }
         this.editModal?.show();
       },
       async submitEditForm() {
         if (!this.editingTimetable) {
           return;
         }
-  
+
+        this.editingTimetable.stage_id = this.newTimetable.stage_id;
+
         try {
-          await axios.put(`${STAGE_API_ENDPOINT}/${this.editingTimetable.id}`, this.editingTimetable);
-          this.editingTimetable = null;
+          await axios.put(`${TIMETABLE_API_ENDPOINT}/${this.editingTimetable.id}`, this.editingTimetable);
           this.timetables = await this.fetchTimetables();
         } catch (error) {
           console.error('Failed to update timetable:', error);
@@ -268,7 +280,7 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
       },
       async deleteTimetable(id: number) {
         try {
-          await axios.delete(`${STAGE_API_ENDPOINT}/${id}`);
+          await axios.delete(`${TIMETABLE_API_ENDPOINT}/${id}`);
           this.timetables = await this.fetchTimetables();
         } catch (error) {
           console.error('Failed to delete timetable:', error);
@@ -278,7 +290,6 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
     computed: {
       filteredStages(): Stage[] {
   const filtered = this.stages.filter(stage => this.newStage && stage.conference_id == this.newStage.id);
-  console.log("filtered " + filtered); // Log the filtered stages
   return filtered;
 },
   timetablesWithConferenceNames() {
@@ -302,10 +313,10 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
     });
   },
 },
-  watch: {
+  /*watch: {
     newStage() {
       this.filteredStages;
     },
-  },
+  },*/
   });
   </script>
