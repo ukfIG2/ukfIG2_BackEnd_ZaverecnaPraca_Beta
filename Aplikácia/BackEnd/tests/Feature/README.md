@@ -1,6 +1,3 @@
-php artisan test --filter ConferenceControllerTest
-php artisan test --filter StageControllerTest
-php artisan test --filter Time_tableControllerTest
+php artisan migrate:fresh
 
-
-php artisan test --testsuite=Feature
+php artisan test tests/Feature/ForExamTest.php

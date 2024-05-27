@@ -7,6 +7,7 @@ use App\Http\Controllers\ConferenceController;
 use App\Http\Controllers\StageController;
 use App\Http\Controllers\Time_tableController;
 use App\Http\Controllers\PresentationController;
+use App\Http\Controllers\SponsorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,3 +47,10 @@ Route::post('/presentations', [PresentationController::class, 'store']);
 Route::get('/presentations/{id}', [PresentationController::class, 'show']);
 Route::put('/presentations/{id}', [PresentationController::class, 'update']);
 Route::delete('/presentations/{id}', [PresentationController::class, 'destroy']);
+
+////Dopln narabanie s fotkami
+Route::get('/sponsors', [SponsorController::class, 'index']);
+Route::post('/sponsors', [SponsorController::class, 'store']);
+Route::get('/sponsors/{id}', [SponsorController::class, 'show']);
+Route::put('/sponsors/{id}', [SponsorController::class, 'update']);
+Route::delete('/sponsors/{id}', [SponsorController::class, 'destroy']);
