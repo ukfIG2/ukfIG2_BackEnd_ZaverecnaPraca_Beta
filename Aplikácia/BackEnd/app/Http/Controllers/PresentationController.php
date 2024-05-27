@@ -14,7 +14,7 @@ class PresentationController extends Controller
                 'id' => $presentation->id,
                 'time_table_id' => $presentation->time_table_id,
                 'name' => $presentation->name,
-                'short_description' => $presentation->description,
+                'short_description' => $presentation->short_description,
                 'long_description' => $presentation->long_description,
                 'max_capacity' => $presentation->max_capacity,
                 'comment' => $presentation->comment,

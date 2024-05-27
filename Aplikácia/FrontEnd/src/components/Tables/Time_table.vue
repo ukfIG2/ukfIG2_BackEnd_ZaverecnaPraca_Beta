@@ -119,7 +119,7 @@
             <tbody>
               <!-- Loop through the list of timetables and display each one in a table row -->
               <tr v-for="timetable in timetablesWithConferenceNames" :key="timetable.id">
-                <th scope="r  ow">{{ timetable.id }}</th>
+                <th scope="row">{{ timetable.id }}</th>
                 <td>{{ timetable.conference_name }}</td>
                 <td>{{ getStageName(timetable.stage_id) }}</td>
                 <td>{{ timetable.time_start }}</td>
@@ -289,8 +289,8 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
     },
     computed: {
       filteredStages(): Stage[] {
-  const filtered = this.stages.filter(stage => this.newStage && stage.conference_id == this.newStage.id);
-  return filtered;
+        const filtered = this.stages.filter(stage => this.newStage && stage.conference_id == this.newStage.id);
+        return filtered;
 },
   timetablesWithConferenceNames() {
     return this.timetables.map(timetable => {
