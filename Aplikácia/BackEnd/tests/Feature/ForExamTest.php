@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\First_name;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -1727,7 +1728,141 @@ class ForExamTest extends TestCase
         $response->assertStatus(422);
         $response->assertJsonValidationErrors('name');
     }
-    
-    
+
     //////////////////////Sponsor/////////////////////
+    
+    //////////////////////Speaker/////////////////////
+    public function test_Speaker_All()
+    {
+        $titles = ['Mgr','Ing','Bc','Phd','Dr','Prof','Doc','MUDr'];
+        $first_names = ['Ivan', 'Juraj', 'Peter', 'Marek', 'Jozef', 'Martin', 'Michal', 'Lukas', 'Tomáš', 'Jakub'];
+        $middle_names = ['Ivanovič', 'Jurajovič', 'Petrovič', 'Marekovič'];
+        $last_names = ['Novák', 'Horváth', 'Kováč', 'Varga', 'Tóth', 'Nagy', 'Baláž', 'Szabó', 'Molnár', 'Farkas'];
+        $companies = ['Google', 'Microsoft', 'Apple', 'Facebook', 'Amazon', 'IBM', 'Oracle', 'Intel', 'Cisco'];
+        $positions = ['CEO', 'CTO', 'COO', 'CIO', 'CMO', 'CDO', 'CISO', 'CPO', 'CLO'];
+
+        $howManyToGenerate = 50;
+
+        for($i = 0; $i < $howManyToGenerate; $i++){
+            $speakerData = [
+                'title' => mt_rand(0, 1) ? $titles[array_rand($titles)] : null,
+                'first_name' => $first_names[array_rand($first_names)],
+                'middle_name' => mt_rand(0, 1) ? $middle_names[array_rand($middle_names)] : null,
+                'last_name' => $last_names[array_rand($last_names)],
+                'company' => mt_rand(0, 1) ? $companies[array_rand($companies)] : null,
+                'position' => mt_rand(0, 1) ? $positions[array_rand($positions)] : null,
+                'short_description' => 'Test Short Description '.$i,
+                'long_description' => 'Test Long Description '.$i,
+                'comment' => 'Test Comment '.$i,
+            ];
+
+            //print_r($speakerData); // Print the speakerData to the console
+
+            $response = $this->postJson('/api/speakers', $speakerData);
+
+            $response->assertStatus(201);
+
+            //$response->dump(); // Print the response to the console
+        }
+
+
+    }
+
+    public function test_Speaker_Requied()
+    {
+        $first_names = ['Ján', 'Matej', 'Miroslav', 'Štefan', 'Milan', 'János', 'József', 'György', 'Péter'];
+        $last_names = ['Kováč', 'Varga', 'Tóth', 'Nagy', 'Baláž', 'Szabó', 'Molnár', 'Farkas', 'Kiss', 'Németh'];
+        
+        $howManyToGenerate = 50;
+
+        for($i = 0; $i < $howManyToGenerate; $i++){
+            $speakerData = [
+                'first_name' => $first_names[array_rand($first_names)],
+                'last_name' => $last_names[array_rand($last_names)],
+                //'short_description' => 'Test Short Description '.$i,
+                //'long_description' => 'Test Long Description '.$i,
+                //'comment' => 'Test Comment '.$i,
+            ];
+
+            //print_r($speakerData); // Print the speakerData to the console
+
+            $response = $this->postJson('/api/speakers', $speakerData);
+
+            $response->assertStatus(201);
+
+            //$response->dump(); // Print the response to the console
+        }
+
+    }
+
+    public function test_Speaker_NoFirstName()
+    {
+        $speakerData = [
+            'last_name' => 'Kováč',
+        ];
+    
+        $response = $this->postJson('/api/speakers', $speakerData);
+    
+        //$response->dump(); // Print the response to the console
+    
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('first_name');
+    }
+
+    public function test_Speaker_NoLastName()
+    {
+        $speakerData = [
+            'first_name' => 'Ján',
+        ];
+    
+        $response = $this->postJson('/api/speakers', $speakerData);
+    
+        //$response->dump(); // Print the response to the console
+    
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('last_name');
+    }
+
+    public function test_Speaker_Edit_1()
+    {
+        $speakerData = [
+            'title' => 'Bc',
+            'first_name' => 'Ján',
+            'middle_name' => '',
+            'last_name' => 'Kováč',
+            'company' => 'Google',
+            'position' => 'CEO',
+            'short_description' => 'Test Short Description',
+            'long_description' => 'Test Long Description',
+            'comment' => 'Test Comment',
+        ];
+    
+        $response = $this->postJson('/api/speakers', $speakerData);
+    
+        //$response->dump(); // Print the response to the console
+
+        $response->assertStatus(201);
+    
+        $speakerId = 101;
+
+        $newSpeakerData = [
+            'title' => 'Ing',
+            'first_name' => 'Matej',
+            'middle_name' => 'Jurajovič',
+            'last_name' => 'Varga',
+            'company' => 'Microsoft',
+            'position' => 'CTO',
+            'short_description' => 'Test Short Description 2',
+            'long_description' => 'Test Long Description 2',
+            'comment' => 'Test Comment 2',
+        ];
+
+        $response = $this->putJson('/api/speakers/' . $speakerId, $newSpeakerData);
+
+        $response->dump(); // Print the response to the console
+
+
+    }
+
+    //////////////////////Speaker/////////////////////
 }

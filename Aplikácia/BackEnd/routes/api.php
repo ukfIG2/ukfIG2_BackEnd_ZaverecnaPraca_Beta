@@ -8,6 +8,7 @@ use App\Http\Controllers\StageController;
 use App\Http\Controllers\Time_tableController;
 use App\Http\Controllers\PresentationController;
 use App\Http\Controllers\SponsorController;
+use App\Http\Controllers\SpeakerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,3 +55,9 @@ Route::post('/sponsors', [SponsorController::class, 'store']);
 Route::get('/sponsors/{id}', [SponsorController::class, 'show']);
 Route::put('/sponsors/{id}', [SponsorController::class, 'update']);
 Route::delete('/sponsors/{id}', [SponsorController::class, 'destroy']);
+
+Route::get('/speakers', [SpeakerController::class, 'index']);
+Route::post('/speakers', [SpeakerController::class, 'store']);
+Route::get('/speakers/{id}', [SpeakerController::class, 'show']);
+Route::put('/speakers/{id}', [SpeakerController::class, 'update']);
+Route::delete('/speakers/{id}', [SpeakerController::class, 'destroy']);

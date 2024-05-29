@@ -2,6 +2,12 @@
 This is just example \
 **DB_DATABASE=BackEnd_UKF**
 
+# !!!Must DO!!!
+## Change database collation
+in **/config/database.php** change **'collation' => 'utf8mb4_unicode_ci',** to **'collation' => 'utf8mb4_bin',**
+
+# !!!Must DO!!!
+
 ## Make migration
 ``` console
 php artisan make:migration migration_name
