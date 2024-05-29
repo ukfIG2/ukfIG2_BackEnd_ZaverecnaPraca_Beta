@@ -254,7 +254,7 @@
         },
         addModal: null as Modal | null,
         editModal: null as Modal | null,
-        editingTimeTable: null as Timetable | null,
+        //editingTimeTable: null as Timetable | null,
       }
     },
     /*async mounted() {

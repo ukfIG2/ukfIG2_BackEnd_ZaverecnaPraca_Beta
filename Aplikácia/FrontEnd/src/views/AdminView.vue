@@ -19,6 +19,7 @@ import Conference_table from '../components/Tables/Conference.vue'
 import Stage_table from '../components/Tables/Stage.vue'
 import Time_table from '../components/Tables/Time_table.vue'
 import Presentation_table from '../components/Tables/Presentation.vue'
+import Sponsor_table from '../components/Tables/Sponsor.vue'
 
 
 // Define the component
@@ -29,6 +30,7 @@ export default {
     Stage_table,
     Time_table,
     Presentation_table,
+    Sponsor_table,
   
 
     // Add other components as needed

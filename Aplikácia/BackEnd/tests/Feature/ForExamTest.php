@@ -1533,7 +1533,7 @@ class ForExamTest extends TestCase
 
         $response->assertStatus(201);
 
-        $response->dump(); // Print the response to the console
+        //$response->dump(); // Print the response to the console
 
         $this->assertDatabaseHas('sponsors', [
             'name' => 'Test Sponsor 02',
@@ -1553,7 +1553,7 @@ class ForExamTest extends TestCase
 
         $response = $this->putJson('/api/sponsors/' . $sponsorId, $newSponsorData);
 
-        $response->dump(); // Print the response to the console
+        //$response->dump(); // Print the response to the console
 
         $this->assertDatabaseHas('sponsors', [
             'name' => 'Test Sponsor 03',
@@ -1577,7 +1577,7 @@ class ForExamTest extends TestCase
 
         $response->assertStatus(201);
 
-        $response->dump(); // Print the response to the console
+        //$response->dump(); // Print the response to the console
 
         $this->assertDatabaseHas('sponsors', [
             'name' => 'Test Sponsor 03',
@@ -1597,7 +1597,7 @@ class ForExamTest extends TestCase
 
         $response = $this->putJson('/api/sponsors/' . $sponsorId, $newSponsorData);
 
-        $response->dump(); // Print the response to the console
+        //$response->dump(); // Print the response to the console
 
         $this->assertDatabaseHas('sponsors', [
             'name' => 'Test Sponsor 04',
@@ -1678,8 +1678,8 @@ class ForExamTest extends TestCase
         $sponsorId = 6;
 
         $newSponsorData = [
-            'name' => 'Test Sponsor 02',
-            'comment' => 'Test Comment 02',
+            'name' => 'Test Sponsor 06',
+            'comment' => 'Test Comment 06',
             'url' => 'https://www.instagram.com',
             'conference_id' => 2,
         ];
@@ -1689,8 +1689,8 @@ class ForExamTest extends TestCase
         //$response->dump(); // Print the response to the console
 
         $this->assertDatabaseHas('sponsors', [
-            'name' => 'Test Sponsor 02',
-            'comment' => 'Test Comment 02',
+            'name' => 'Test Sponsor 06',
+            'comment' => 'Test Comment 06',
             'url' => 'https://www.instagram.com',
             'conference_id' => 2,
         ]);
