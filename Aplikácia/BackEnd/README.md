@@ -61,6 +61,17 @@ php artisan test
 php artisan test --filter testStore
 ```
 
+### Install Sanctum using the Composer command.
+``` console
+composer require laravel/sanctum
+```
+### Next, publish the Sanctum configuration file.
+``` console
+php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+```
+### In /app/Http/Kernel.php uncoment.
+\Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+
 ## Common naming practices
 **Tables should be singluar, lower-case and use "_".**\
 **Models should be singluar and first letter capital.**\

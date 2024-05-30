@@ -5,9 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Administration;
 use Illuminate\Http\Request;
 
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+
 class AdministrationController extends Controller
 {
-    public function index()
+ /*   public function index()
     {
         return Administration::all()->map(function ($administration) {
             return [
@@ -130,5 +135,58 @@ class AdministrationController extends Controller
         $administration->delete();
 
         return response()->json(['message' => 'Administration Deleted Successfully.']);
+    }*/
+
+    public function register(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'login' => 'required',
+            'password' => 'required',
+            'confirmed_password' => 'required|same:password',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['Validation error' => $validator->errors()], 401);
+        }
+
+        $input = $request->all();
+        $input['password'] = Hash::make($input['confirmed_password']);
+        $administration = Administration::create($input);
+        //$success['token'] = $administration->createToken('MyApp')->plainTextToken;
+        //$success['login'] = $administration->login;
+
+        //return response()->json(['Successfull registration' => $success], 200);
+
+        return response()->json(['message' => 'Administrator created Successfully.'], 200);
     }
+
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'login' => 'required',
+            'password' => 'required',
+        ]);
+
+        $admin = Administration::where('login', $request->login)->first();
+
+        if (!$admin && Hash::check($request->password, $admin->password)) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $token = $admin->createToken('MyApp')->plainTextToken;
+
+        return response()->json([
+            'token' => $token,
+            'role' => 'admin',
+    ], 200);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'Logged out'], 200);
+    }
+
+
 }
