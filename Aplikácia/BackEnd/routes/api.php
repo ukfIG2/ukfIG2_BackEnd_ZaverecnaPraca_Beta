@@ -50,14 +50,25 @@ Route::get('/presentations/{id}', [PresentationController::class, 'show']);
 Route::put('/presentations/{id}', [PresentationController::class, 'update']);
 Route::delete('/presentations/{id}', [PresentationController::class, 'destroy']);
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/sponsors', [SponsorController::class, 'index']);
+    Route::post('/sponsors', [SponsorController::class, 'store']);
+    Route::get('/sponsors/{id}', [SponsorController::class, 'show']);
+    Route::put('/sponsors/{id}', [SponsorController::class, 'update']);
+    Route::delete('/sponsors/{id}', [SponsorController::class, 'destroy']);
+    Route::post('/adminLogout', [AdministrationController::class, 'logout']);
+    Route::get('/speakers', [SpeakerController::class, 'index']);
+});
+
+
 ////Dopln narabanie s fotkami
-Route::get('/sponsors', [SponsorController::class, 'index']);
+/* Route::get('/sponsors', [SponsorController::class, 'index']);
 Route::post('/sponsors', [SponsorController::class, 'store']);
 Route::get('/sponsors/{id}', [SponsorController::class, 'show']);
 Route::put('/sponsors/{id}', [SponsorController::class, 'update']);
-Route::delete('/sponsors/{id}', [SponsorController::class, 'destroy']);
+Route::delete('/sponsors/{id}', [SponsorController::class, 'destroy']); */
 
-Route::get('/speakers', [SpeakerController::class, 'index']);
+//Route::get('/speakers', [SpeakerController::class, 'index']);
 Route::post('/speakers', [SpeakerController::class, 'store']);
 Route::get('/speakers/{id}', [SpeakerController::class, 'show']);
 Route::put('/speakers/{id}', [SpeakerController::class, 'update']);
@@ -68,4 +79,4 @@ Route::post('/adminRegister', [AdministrationController::class, 'register']);
 //create route for administration fo r login
 Route::post('/adminLogin', [AdministrationController::class, 'login']);
 //create route for administration fo r logout
-Route::post('/adminLogout', [AdministrationController::class, 'logout']);
+/* Route::post('/adminLogout', [AdministrationController::class, 'logout']); */

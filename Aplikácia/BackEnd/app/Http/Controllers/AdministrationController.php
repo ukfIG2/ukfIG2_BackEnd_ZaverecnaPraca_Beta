@@ -181,11 +181,20 @@ class AdministrationController extends Controller
     ], 200);
     }
 
-    public function logout(Request $request)
+    /*public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Logged out'], 200);
+    }*/
+
+    public function logout(){
+        if (auth()->check()) {
+            auth()->user()->tokens()->delete();
+            return response(['message' => 'Logged out']);
+        }
+
+        return response(['message' => 'No authenticated user'], 401);
     }
 
 

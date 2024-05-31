@@ -21,6 +21,9 @@ import Time_table from '../components/Tables/Time_table.vue'
 import Presentation_table from '../components/Tables/Presentation.vue'
 import Sponsor_table from '../components/Tables/Sponsor.vue'
 import Speaker_table from '../components/Tables/Speaker.vue'
+import RegisterForm from '@/components/Tables/RegisterForm.vue'
+import LoginForm from '@/components/Tables/LoginForm.vue'
+import LogOutForm from '@/components/Tables/LogOutForm.vue'
 
 
 // Define the component
@@ -33,6 +36,9 @@ export default {
     Presentation_table,
     Sponsor_table,
     Speaker_table,
+    RegisterForm,
+    LoginForm,
+    LogOutForm,
   
 
     // Add other components as needed
