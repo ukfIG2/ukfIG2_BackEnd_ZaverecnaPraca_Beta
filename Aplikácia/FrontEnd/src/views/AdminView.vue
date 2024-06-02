@@ -24,6 +24,9 @@ import Speaker_table from '../components/Tables/Speaker.vue'
 import RegisterForm from '@/components/Tables/RegisterForm.vue'
 import LoginForm from '@/components/Tables/LoginForm.vue'
 import LogOutForm from '@/components/Tables/LogOutForm.vue'
+import ParticipantRegister from '@/components/Tables/ParticipantRegister.vue'
+import ParticipantLogin from '@/components/Tables/ParticipantLogin.vue'
+import ParticipantLogOut from '@/components/Tables/ParticipantLogOut.vue'
 
 
 // Define the component
@@ -39,6 +42,9 @@ export default {
     RegisterForm,
     LoginForm,
     LogOutForm,
+    ParticipantRegister,
+    ParticipantLogin, 
+    ParticipantLogOut
   
 
     // Add other components as needed

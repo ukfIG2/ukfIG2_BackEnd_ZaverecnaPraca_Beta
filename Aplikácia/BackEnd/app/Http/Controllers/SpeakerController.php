@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Speaker;
 use Illuminate\Http\Request;
+
 use App\Models\Title;
 use App\Models\First_name;
 use App\Models\Middle_name;

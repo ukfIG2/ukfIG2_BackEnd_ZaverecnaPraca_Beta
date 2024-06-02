@@ -4,13 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class Participant extends Model
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+
+class Participant extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens, Notifiable;
 
     protected $fillable = ['title_id', 'first_name_id', 'middle_name_id', 'last_name_id', 'company_id', 'position_id', 'email_id', 'token_link', 'comment'];
 
+    protected $hidden = ['token_link'];
+    
     public function title()
     {
         return $this->belongsTo(Title::class);

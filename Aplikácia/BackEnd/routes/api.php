@@ -10,6 +10,7 @@ use App\Http\Controllers\PresentationController;
 use App\Http\Controllers\SponsorController;
 use App\Http\Controllers\SpeakerController;
 use App\Http\Controllers\AdministrationController;
+use App\Http\Controllers\ParticipantController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,8 +57,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/sponsors/{id}', [SponsorController::class, 'show']);
     Route::put('/sponsors/{id}', [SponsorController::class, 'update']);
     Route::delete('/sponsors/{id}', [SponsorController::class, 'destroy']);
+
     Route::post('/adminLogout', [AdministrationController::class, 'logout']);
+    //Route::get('/speakers', [SpeakerController::class, 'index']);
+    Route::post('participantLogout', [ParticipantController::class, 'logout']);
+});
+
+Route::middleware('auth:participant')->group(function () {
     Route::get('/speakers', [SpeakerController::class, 'index']);
+    //Route::post('/participantLogout', [ParticipantController::class, 'logout']);
 });
 
 
@@ -80,3 +88,7 @@ Route::post('/adminRegister', [AdministrationController::class, 'register']);
 Route::post('/adminLogin', [AdministrationController::class, 'login']);
 //create route for administration fo r logout
 /* Route::post('/adminLogout', [AdministrationController::class, 'logout']); */
+
+Route::post('/participantRegister', [ParticipantController::class, 'register']);
+Route::post('/participantLogin', [ParticipantController::class, 'login']);
+//Route::post('participantLogout', [ParticipantController::class, 'logout']);
