@@ -50,7 +50,7 @@ Route::post('/presentations', [PresentationController::class, 'store']);
 Route::get('/presentations/{id}', [PresentationController::class, 'show']);
 Route::put('/presentations/{id}', [PresentationController::class, 'update']);
 Route::delete('/presentations/{id}', [PresentationController::class, 'destroy']);
-
+/*
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/sponsors', [SponsorController::class, 'index']);
     Route::post('/sponsors', [SponsorController::class, 'store']);
@@ -61,11 +61,26 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/adminLogout', [AdministrationController::class, 'logout']);
     //Route::get('/speakers', [SpeakerController::class, 'index']);
     Route::post('participantLogout', [ParticipantController::class, 'logout']);
+});*/
+Route::middleware(['auth:sanctum', 'checkUserParticipant'])->group(function () {
+    Route::get('/sponsors', [SponsorController::class, 'index']);
+    Route::post('/sponsors', [SponsorController::class, 'store']);
+    Route::get('/sponsors/{id}', [SponsorController::class, 'show']);
+    Route::put('/sponsors/{id}', [SponsorController::class, 'update']);
+    Route::delete('/sponsors/{id}', [SponsorController::class, 'destroy']);
+
+    Route::post('participantLogout', [ParticipantController::class, 'logout']);
 });
 
-Route::middleware('auth:participant')->group(function () {
+Route::middleware(['auth:sanctum', 'checkUserAdministration'])->group(function () {
+    Route::post('/adminLogout', [AdministrationController::class, 'logout']);
+
     Route::get('/speakers', [SpeakerController::class, 'index']);
-    //Route::post('/participantLogout', [ParticipantController::class, 'logout']);
+    Route::post('/speakers', [SpeakerController::class, 'store']);
+    Route::get('/speakers/{id}', [SpeakerController::class, 'show']);
+    Route::put('/speakers/{id}', [SpeakerController::class, 'update']);
+    Route::delete('/speakers/{id}', [SpeakerController::class, 'destroy']);
+
 });
 
 
@@ -76,11 +91,11 @@ Route::get('/sponsors/{id}', [SponsorController::class, 'show']);
 Route::put('/sponsors/{id}', [SponsorController::class, 'update']);
 Route::delete('/sponsors/{id}', [SponsorController::class, 'destroy']); */
 
-//Route::get('/speakers', [SpeakerController::class, 'index']);
+/*Route::get('/speakers', [SpeakerController::class, 'index']);
 Route::post('/speakers', [SpeakerController::class, 'store']);
 Route::get('/speakers/{id}', [SpeakerController::class, 'show']);
 Route::put('/speakers/{id}', [SpeakerController::class, 'update']);
-Route::delete('/speakers/{id}', [SpeakerController::class, 'destroy']);
+Route::delete('/speakers/{id}', [SpeakerController::class, 'destroy']);*/
 
 //create route for administration fo r register
 Route::post('/adminRegister', [AdministrationController::class, 'register']);
