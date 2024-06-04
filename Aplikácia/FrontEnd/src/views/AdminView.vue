@@ -27,7 +27,7 @@ import LogOutForm from '@/components/Tables/LogOutForm.vue'
 import ParticipantRegister from '@/components/Tables/ParticipantRegister.vue'
 import ParticipantLogin from '@/components/Tables/ParticipantLogin.vue'
 import ParticipantLogOut from '@/components/Tables/ParticipantLogOut.vue'
-
+import Administration from '@/components/Tables/Administration.vue'
 
 // Define the component
 
@@ -44,7 +44,8 @@ export default {
     LogOutForm,
     ParticipantRegister,
     ParticipantLogin, 
-    ParticipantLogOut
+    ParticipantLogOut,
+    Administration,
   
 
     // Add other components as needed

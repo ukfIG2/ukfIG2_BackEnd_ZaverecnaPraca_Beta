@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AdministrationController extends Controller
 {
- /*   public function index()
+    public function index()
     {
         return Administration::all()->map(function ($administration) {
             return [
@@ -25,117 +25,6 @@ class AdministrationController extends Controller
             ];
         });
     }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'login' => 'required',
-            'password' => 'required',
-            'confirmed_password' => 'required|same:password', // 'confirmed_password' => 'required|same:password
-            'comment' => 'nullable',
-        ]);
-
-        $administration = new Administration([
-            'login' => $request->get('login'),
-            'password' => $request->get('confirmed_password'),
-            'comment' => $request->get('comment'),
-        ]);
-
-        $administration->save();
-
-        return response()->json(['message' => 'Administration Created Successfully.'], 201);
-    }
-
-    public function show($id)
-    {
-        $administration = Administration::find($id);
-
-        if (!$administration) {
-            return response()->json(['message' => 'Administration not found'], 404);
-        }
-
-        return[
-            'id' => $administration->id,
-            'login' => $administration->login,
-            'comment' => $administration->comment,
-            //in case if needed timesamps
-            'created_at' => $administration->created_at,
-            'updated_at' => $administration->updated_at,
-        ];
-    }
-
-    public function updateComment(Request $request, $id)
-    {
-        $administration = Administration::find($id);
-
-        if (!$administration) {
-            return response()->json(['message' => 'Administratot not found'], 404);
-        }
-
-        $request->validate([
-            'comment' => 'nullable',
-        ]);
-
-        $administration->comment = $request->get('comment');
-
-        $administration->save();
-
-        return response()->json(['message' => 'Administration comment Updated Successfully.'], 200);
-    }
-
-    public function updateLogin(Request $request, $id)
-    {
-        $administration = Administration::find($id);
-
-        if (!$administration) {
-            return response()->json(['message' => 'Administratot not found'], 404);
-        }
-
-        $request->validate([
-            'login' => 'required',
-        ]);
-
-        $administration->login = $request->get('login');
-
-        $administration->save();
-
-        return response()->json(['message' => 'Administration login Updated Successfully.'], 200);
-    }
-
-    public function updatePassword(Request $request, $id)
-    {
-        $administration = Administration::find($id);
-
-        if (!$administration) {
-            return response()->json(['message' => 'Administratot not found'], 404);
-        }
-
-        $request->validate([
-            'password' => 'required',
-            'confirmed_password' => 'required|same:password',
-        ]);
-
-        $administration->password = $request->get('confirmed_password');
-
-        $administration->save();
-
-        return response()->json(['message' => 'Administration password Updated Successfully.'], 200);
-    }
-
-    public function destroy($Request $request, $id)
-    {
-        $administration = Administration::find($id);
-
-        if (!$administration) {
-            return response()->json(['message' => 'Administration not found'], 404);
-        }
-
-        
-
-        $administration->delete();
-
-        return response()->json(['message' => 'Administration Deleted Successfully.']);
-    }*/
 
     public function register(Request $request)
     {
@@ -196,6 +85,66 @@ class AdministrationController extends Controller
 
         return response(['message' => 'No authenticated user'], 401);
     }*/
+
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+            'password' => 'required',
+            'confirmed_password' => 'required|same:password',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['Validation error' => $validator->errors()], 401);
+        }
+
+        $admin = Administration::where('id', $request->id)->first();
+
+        if (!$admin) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $admin->password = Hash::make($request->confirmed_password);
+        $admin->save();
+
+        return response()->json(['message' => 'Password changed successfully'], 200);
+    }
+
+    public function destroy($id)
+    {
+        $administration = Administration::find($id);
+
+        if (!$administration) {
+            return response()->json(['message' => 'Administration not found'], 404);
+        }
+
+        $administration->delete();
+
+        return response()->json(['message' => 'Administration deleted successfully']);
+    }
+
+    public function changeComment(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+            'comment' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['Validation error' => $validator->errors()], 401);
+        }
+
+        $admin = Administration::where('id', $request->id)->first();
+
+        if (!$admin) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $admin->comment = $request->comment;
+        $admin->save();
+
+        return response()->json(['message' => 'Comment changed successfully'], 200);
+    }
 
 
 }

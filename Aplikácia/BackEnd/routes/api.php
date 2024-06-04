@@ -11,6 +11,7 @@ use App\Http\Controllers\SponsorController;
 use App\Http\Controllers\SpeakerController;
 use App\Http\Controllers\AdministrationController;
 use App\Http\Controllers\ParticipantController;
+use App\Models\Administration;
 
 /*
 |--------------------------------------------------------------------------
@@ -107,3 +108,10 @@ Route::post('/adminLogin', [AdministrationController::class, 'login']);
 Route::post('/participantRegister', [ParticipantController::class, 'register']);
 Route::post('/participantLogin', [ParticipantController::class, 'login']);
 //Route::post('participantLogout', [ParticipantController::class, 'logout']);
+
+
+Route::get('/administrations', [AdministrationController::class, 'index']);
+Route::delete('/administrations/{id}', [AdministrationController::class, 'destroy']);
+//route for changePassword
+Route::put('/changePassword', [AdministrationController::class, 'changePassword']);
+Route::put('/changeComment', [AdministrationController::class, 'changeComment']);
