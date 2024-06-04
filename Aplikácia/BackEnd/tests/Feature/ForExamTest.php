@@ -6,6 +6,7 @@ use App\Models\First_name;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Illuminate\Support\Str;
 
 class ForExamTest extends TestCase
 {
@@ -1859,9 +1860,196 @@ class ForExamTest extends TestCase
 
         $response = $this->putJson('/api/speakers/' . $speakerId, $newSpeakerData);
 
-        $response->dump(); // Print the response to the console
+        //$response->dump(); // Print the response to the console
 
 
     }
     //////////////////////Speaker/////////////////////
+
+    /////////////////////Administration/////////////////////
+    public function test_Administration_All()
+    {
+        //Create a string of random characters to use as login size max 10
+        $login = Str::random(10);
+        //Create a string of random characters to use as password size max 10
+        $password = Str::random(25);
+        
+        $administrationData = [
+            'login' => $login,
+            'password' => $password,
+            'confirmed_password' => $password,
+        ];
+
+        $response = $this->postJson('/api/adminRegister', $administrationData);
+
+        //$response->dump(); // Print the response to the console
+        
+        $response->assertStatus(200);
+
+        $this->assertDatabaseHas('administrations', [
+            'login' => $login,
+        ]);
+
+        $commentData = [
+            'id' => 1,
+            'comment' => $password,
+        ];
+
+        $response = $this->putJson('/api/changeComment', $commentData);
+
+        //$response->dump(); // Print the response to the console
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseHas('administrations', [
+            'login' => $login,
+            'comment' => $password,
+        ]);
+    }
+
+    public function test_Administration_NoLogin()
+    {
+        $administrationData = [
+            'password' => 'password',
+            'confirmed_password' => 'password',
+        ];
+    
+        $response = $this->postJson('/api/adminRegister', $administrationData);
+    
+        //$response->dump(); // Print the response to the console
+    
+        $response->assertStatus(401);
+        $response->assertJsonPath('Validation error.login.0', 'The login field is required.');
+    }
+
+    public function test_Administration_NoPassword()
+    {
+        $administrationData = [
+            'login' => 'login',
+            'confirmed_password' => 'password',
+        ];
+    
+        $response = $this->postJson('/api/adminRegister', $administrationData);
+    
+        //$response->dump(); // Print the response to the console
+    
+        $response->assertStatus(401);
+        $response->assertJsonPath('Validation error.password.0', 'The password field is required.');
+    }
+
+    public function test_Administration_NoConfirmedPassword()
+    {
+        $administrationData = [
+            'login' => 'login',
+            'password' => 'password',
+        ];
+    
+        $response = $this->postJson('/api/adminRegister', $administrationData);
+    
+        //$response->dump(); // Print the response to the console
+    
+        $response->assertStatus(401);
+        $response->assertJsonPath('Validation error.confirmed_password.0', 'The confirmed password field is required.');    }
+    /////////////////////Administration/////////////////////
+
+    ////////////////////Participant/////////////////////
+    public function test_Participant_All()
+    {
+        $first_names = ['Jan', 'Matej', 'Miroslav', 'Stefan', 'Milan', 'Janos', 'Jozsef', 'Gyorgy', 'Peter'];
+        $last_names = ['Kovac', 'Varga', 'Toth', 'Nagy', 'Balaz', 'Szabo', 'Molnar', 'Farkas', 'Kiss', 'Nemeth'];
+        $emails = ['gmail.com', 'hotmail.com', 'yahoo.com', 'outlook.com', 'seznam.cz', 'centrum.cz', 'azet.sk', 'post.sk', 'zoznam.sk', 'atlas.sk'];
+
+        $titles = ['Mgr','Ing','Bc','Phd','Dr','Prof','Doc','MUDr'];
+        $middle_names = ['Ivanovic', 'Jurajovic', 'Petrovic', 'Marekovic'];
+        $companies = ['Google', 'Microsoft', 'Apple', 'Facebook', 'Amazon', 'IBM', 'Oracle', 'Intel', 'Cisco'];
+        $positions = ['CEO', 'CTO', 'COO', 'CIO', 'CMO', 'CDO', 'CISO', 'CPO', 'CLO'];
+
+        $howManyToGenerate = 25;
+
+        for($i = 0; $i < $howManyToGenerate; $i++){
+            $password = Str::random(25);
+            $participantData = [
+                'title' => mt_rand(0, 1) ? $titles[array_rand($titles)] : null,
+                'first_name' => $first_names[array_rand($first_names)],
+                'middle_name' => mt_rand(0, 1) ? $middle_names[array_rand($middle_names)] : null,
+                'last_name' => $last_names[array_rand($last_names)],
+                'company' => mt_rand(0, 1) ? $companies[array_rand($companies)] : null,
+                'position' => mt_rand(0, 1) ? $positions[array_rand($positions)] : null,
+                'email' => $first_names[array_rand($first_names)].'.'.$last_names[array_rand($last_names)].'@'.$emails[array_rand($emails)],
+                //'comment' => 'Test Comment '.$i,
+                'password' => $password,
+                'confirmed_password' => $password,
+            ];
+
+            //print_r($participantData); // Print the participantData to the console
+
+            $response = $this->postJson('/api/participantRegister', $participantData);
+
+            //$response->dump(); // Print the response to the console
+
+            $response->assertStatus(200);
+
+            $participantData['comment'] = $password;
+
+            $response = $this->putJson('/api/participants/' . $i, $participantData);
+
+            //$response->dump(); // Print the response to the console
+        }
+    }
+
+    public function test_Participant_NoFirstName()
+    {
+        $participantData = [
+            'last_name' => 'Kováč',
+            'email' => 'nieco@nieco',
+            'password' => 'password',
+            'confirmed_password' => 'password',
+        ];
+
+        $response = $this->postJson('/api/participantRegister', $participantData);
+
+        //$response->dump(); // Print the response to the console
+
+        $response->assertStatus(401);
+
+        $response->assertJsonPath('Validation error.first_name.0', 'The first name field is required.');
+    }
+
+    public function test_Participant_NoLastName()
+    {
+        $participantData = [
+            'first_name' => 'Ján',
+            'email' => 'nieco@nieco',
+            'password' => 'password',
+            'confirmed_password' => 'password',
+        ];
+
+        $response = $this->postJson('/api/participantRegister', $participantData);
+
+        //$response->dump(); // Print the response to the console
+
+        $response->assertStatus(401);
+
+        $response->assertJsonPath('Validation error.last_name.0', 'The last name field is required.');
+    }
+
+    public function test_Participant_NoEmail()
+    {
+        $participantData = [
+            'first_name' => 'Ján',
+            'last_name' => 'Kováč',
+            'password' => 'password',
+            'confirmed_password' => 'password',
+        ];
+
+        $response = $this->postJson('/api/participantRegister', $participantData);
+
+        //$response->dump(); // Print the response to the console
+
+        $response->assertStatus(401);
+
+        $response->assertJsonPath('Validation error.email.0', 'The email field is required.');
+    }
+
+    ////////////////////Participant/////////////////////
 }
