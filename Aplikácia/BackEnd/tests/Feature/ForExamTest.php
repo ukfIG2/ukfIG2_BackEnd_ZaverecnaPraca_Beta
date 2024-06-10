@@ -5,8 +5,11 @@ namespace Tests\Feature;
 use App\Models\First_name;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use Illuminate\Support\Str;
+use Illuminate\Http\UploadedFile;
+
 
 class ForExamTest extends TestCase
 {
@@ -2052,4 +2055,50 @@ class ForExamTest extends TestCase
     }
 
     ////////////////////Participant/////////////////////
+
+    ////////////////////Images/////////////////////
+
+    public function test_Image_All()
+    {
+        //Storage::fake('public');
+
+        $file1 = new UploadedFile(base_path('tests/images/01.jpg'), '01.jpg', 'image/jpeg', null, true);
+        $file2 = new UploadedFile(base_path('tests/images/02.jpg'), '02.jpg', 'image/jpeg', null, true);
+
+        $response = $this->json('POST', '/api/upload', [
+            'images' => [$file1, $file2],
+            'names' => ['test1.jpg', 'test2.jpg'],
+            'alts' => ['alt1', 'alt2'],
+            'comments' => ['comment1', 'comment2']
+        ]);
+        
+        $response->dump(); // Print the response to the console
+
+        $response->assertStatus(201)
+                 ->assertJson(['message' => 'Images Uploaded Successfully.']);
+
+        $response->dump(); // Print the response to the console
+
+        
+        
+
+        $this->assertTrue(Storage::disk('public')->exists('images/test1.jpg'));
+        $this->assertTrue(Storage::disk('public')->exists('images/test2.jpg'));
+    }
+
+    public function test_Image_NoImages()
+    {
+        $response = $this->json('POST', '/api/upload', [
+            'names' => ['test1', 'test2'],
+            'alts' => ['alt1', 'alt2'],
+            'comments' => ['comment1', 'comment2']
+        ]);
+
+        $response->dump(); // Print the response to the console
+
+        $response->assertStatus(400)
+                 ->assertJson(['message' => 'No files uploaded.']);
+    }
+
+    ////////////////////Images/////////////////////
 }

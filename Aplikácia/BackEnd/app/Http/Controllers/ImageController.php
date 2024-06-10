@@ -57,7 +57,7 @@ class ImageController extends Controller
         $comments = $request->get('comments');
 
         if (!$images || count($images) === 0) {
-            return response()->json(['message' => 'No files uploaded'], 400);
+            return response()->json(['message' => 'No files uploaded.'], 400);
         }
 
         $imagePaths = [];
