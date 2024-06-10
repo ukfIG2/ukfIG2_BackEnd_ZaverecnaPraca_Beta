@@ -72,6 +72,11 @@ php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
 ### In /app/Http/Kernel.php uncoment.
 \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
 
+## Create shortcut for images
+``` console
+php artisan storage:link
+```
+
 ## Common naming practices
 **Tables should be singluar, lower-case and use "_".**\
 **Models should be singluar and first letter capital.**\

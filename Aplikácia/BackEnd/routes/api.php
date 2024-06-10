@@ -11,6 +11,7 @@ use App\Http\Controllers\SponsorController;
 use App\Http\Controllers\SpeakerController;
 use App\Http\Controllers\AdministrationController;
 use App\Http\Controllers\ParticipantController;
+use App\Http\Controllers\ImageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -93,3 +94,5 @@ Route::post('/participants', [ParticipantController::class, 'store']);
 Route::get('/participants/{id}', [ParticipantController::class, 'show']);
 Route::put('/participants/{id}', [ParticipantController::class, 'update']);
 Route::delete('/participants/{id}', [ParticipantController::class, 'destroy']);
+
+Route::post('/upload', [ImageController::class, 'upload']);
