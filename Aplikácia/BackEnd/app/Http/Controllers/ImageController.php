@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Image;
+use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Support\Facades\Validator;
 
@@ -103,6 +104,120 @@ class ImageController extends Controller
 
         //return response()->json(['message' => 'Images Uploaded Successfully.', 'paths' => $imagePaths], 201);
         return response()->json(['message' => 'Images Uploaded Successfully.'], 201);
+    }
+
+    public function index()
+    {
+        $images = Image::all();
+
+        return response()->json($images, 200);
+    }
+
+    /*public function delete($id)
+    {
+        $image = Image::find($id);
+
+        if (!$image) {
+            return response()->json(['message' => 'Image not found'], 404);
+        }
+
+        $image->delete();
+
+        return response()->json(['message' => 'Image deleted successfully'], 200);
+    }*/
+
+    public function delete($id)
+    {
+        $image = Image::find($id);
+
+        if (!$image) {
+            return response()->json(['message' => 'Image not found'], 404);
+        }
+
+        // Delete the file from storage
+        if (Storage::disk('public')->exists($image->path_to)) {
+            Storage::disk('public')->delete($image->path_to);
+        }
+
+        $image->delete();
+
+        return response()->json(['message' => 'Image and file deleted successfully'], 200);
+    }
+
+   /* public function update(Request $request, $id)
+    {
+        $image = Image::find($id);
+
+        if (!$image) {
+            return response()->json(['message' => 'Image not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'alt' => 'required',
+            'comment' => 'nullable',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['Validation error' => $validator->errors()], 401);
+        }
+
+        $image->name = $request->get('name');
+        $image->alt = $request->get('alt');
+        $image->comment = $request->get('comment');
+
+        $image->save();
+
+        return response()->json(['message' => 'Image updated successfully'], 200);
+    }*/
+
+    public function update(Request $request, $id)
+    {
+        $image = Image::find($id);
+
+        if (!$image) {
+            return response()->json(['message' => 'Image not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'alt' => 'required',
+            'comment' => 'nullable',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['Validation error' => $validator->errors()], 401);
+        }
+
+        // Get the old and new names
+        $oldName = $image->name;
+        $newName = $request->get('name');
+
+        // Update the image name and alt text
+        $image->name = $newName;
+        $image->alt = $request->get('alt');
+        $image->comment = $request->get('comment');
+
+        // If the name has changed, update the file name and path_to
+        if ($oldName !== $newName) {
+            // Get the old path
+            $oldPath = $image->path_to;
+
+            // Generate the new path
+            $newPath = str_replace($oldName, $newName, $oldPath);
+
+            // Rename the file
+            if (Storage::disk('public')->exists($oldPath)) {
+                Storage::disk('public')->move($oldPath, $newPath);
+            }
+
+            // Update the path_to in the database
+            $image->path_to = $newPath;
+        }
+
+        $image->save();
+
+        return response()->json(['message' => 'Image updated successfully'], 200);
     }
 
 }

@@ -29,6 +29,7 @@ import ParticipantLogin from '@/components/Tables/ParticipantLogin.vue'
 import ParticipantLogOut from '@/components/Tables/ParticipantLogOut.vue'
 import Administration from '@/components/Tables/Administration.vue'
 import ImageUpload from '@/components/Tables/ImageUpload.vue'
+import Image_table from '../components/Tables/Image.vue'
 // Define the component
 
 export default {
@@ -47,6 +48,7 @@ export default {
     ParticipantLogOut,
     Administration,
     ImageUpload,
+    Image_table
 
     // Add other components as needed
   },
