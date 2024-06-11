@@ -125,6 +125,7 @@
 import { defineComponent } from 'vue';
 import axios from 'axios';
 import { Modal } from 'bootstrap';
+import SF from '@/assets/sharedFunctions';
 
 interface Conference {
   id: number;
@@ -134,8 +135,6 @@ interface Conference {
   comment?: string;
   address_of_conference?: string;
 }
-
-const API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/conferences';
 
 export default defineComponent({
   name: 'Conference',
@@ -155,7 +154,7 @@ export default defineComponent({
     };
   },
   async mounted() {
-    this.conferences = await this.fetchConferences();
+    this.conferences = await SF.fetchConferenceData();
 
     const addModalElement = document.getElementById('conferenceModal');
     const editModalElement = document.getElementById('editConferenceModal');
@@ -168,17 +167,13 @@ export default defineComponent({
     this.editModal = new Modal(editModalElement);
   },
   methods: {
-    async fetchConferences() {
-      const response = await axios.get(API_ENDPOINT);
-      return response.data;
-    },
     async submitForm() {
       if (!this.newConference.name || !this.newConference.date) {
         alert('Je potrebné zadať názov a dátum konferencie.');
         return;
       }
 
-      await axios.post(API_ENDPOINT, this.newConference);
+      await axios.post(SF.API_ENDPOINT_CONFERENCES, this.newConference);
       
       this.newConference = {
         name: '',
@@ -187,7 +182,7 @@ export default defineComponent({
         address: '',
       };
       
-      this.conferences = await this.fetchConferences();
+      this.conferences = await SF.fetchConferenceData();
     },
     editConference(conference: Conference) {
       this.editingConference = { ...conference };
@@ -200,9 +195,9 @@ export default defineComponent({
       }
 
       try {
-        await axios.put(`${API_ENDPOINT}/${this.editingConference.id}`, this.editingConference);
+        await axios.put(`${SF.API_ENDPOINT_CONFERENCES}/${this.editingConference.id}`, this.editingConference);
         this.editingConference = null;
-        this.conferences = await this.fetchConferences();
+        this.conferences = await SF.fetchConferenceData();
       } catch (error) {
         console.error('Failed to update conference:', error);
       }
@@ -210,8 +205,8 @@ export default defineComponent({
     },
     async deleteConference(id: number) {
       try {
-        await axios.delete(`${API_ENDPOINT}/${id}`);
-        this.conferences = await this.fetchConferences();
+        await axios.delete(`${SF.API_ENDPOINT_CONFERENCES}/${id}`);
+        this.conferences = await SF.fetchConferenceData();
       } catch (error) {
         console.error('Failed to delete conference:', error);
       }

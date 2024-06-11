@@ -128,14 +128,13 @@
 import { defineComponent } from 'vue';
 import axios from 'axios';
 import { Modal } from 'bootstrap';
+import SF from '@/assets/sharedFunctions';
 
 interface Administration {
     id: number;
     login: string;
     comment?: string;
 }
-
-const API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/administrations';
 
 export default defineComponent({
     name: 'Administration',
@@ -159,15 +158,15 @@ export default defineComponent({
         }
     },
     async mounted() {
-        this.administrations = (await axios.get(API_ENDPOINT)).data;
+        this.administrations = (await axios.get(SF.API_ENDPOINT_ADMINISTRATIONS)).data;
     },
     methods: {
         async fetchAdministrations() {
-            const response = await axios.get(API_ENDPOINT);
+            const response = await axios.get(SF.API_ENDPOINT_ADMINISTRATIONS);
             return response.data;   
         },
         async deleteAdministration(id: number) {
-            await axios.delete(`${API_ENDPOINT}/${id}`);
+            await axios.delete(`${SF.API_ENDPOINT_ADMINISTRATIONS}/${id}`);
             this.administrations = await this.fetchAdministrations();
         },
         async submitForm() {
@@ -200,7 +199,8 @@ export default defineComponent({
         },
         openChangeCommentModal(administration: Administration) {
             this.editComment.id = administration.id;
-            this.editComment.comment = administration.comment || '';            const modalElement = document.getElementById('changeCommentModal');
+            this.editComment.comment = administration.comment || '';            
+            const modalElement = document.getElementById('changeCommentModal');
             if (modalElement) {
                 const modal = new Modal(modalElement);
                 modal.show();

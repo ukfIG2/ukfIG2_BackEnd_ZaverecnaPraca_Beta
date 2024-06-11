@@ -119,6 +119,7 @@
 import { defineComponent } from 'vue';
 import axios from 'axios';
 import { Modal } from 'bootstrap';
+import SF from '@/assets/sharedFunctions';
 
 interface Stage {
   id: number;
@@ -133,10 +134,6 @@ interface Conference {
   name: string;
   date: string;
 }
-
-const API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/stages';
-const API_ENDPOINT_CONFERENCES = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/conferences';
-
 
 export default defineComponent({
   name: 'Stage',
@@ -167,48 +164,22 @@ export default defineComponent({
   this.editModal = new Modal(editModalElement);
 
   // Fetch conferences before stages
-  this.conferences = await this.fetchConferences();
-  this.stages = await this.fetchStages();
+  this.conferences = await SF.fetchConferenceData();
+  this.stages = await SF.fetchStageData();
 },
   methods: {
-    async fetchStages() {
-  const response = await axios.get(API_ENDPOINT);
-
-    // Log the response data to the console
-    //console.log(response.data);
-
-  return response.data.map((stage: any) => ({
-    ...stage,
-    conference: this.getConferenceName(stage.conference_id),
-  }));
-},
-   /* async fetchConferences() {
-      const response = await axios.get(API_ENDPOINT_CONFERENCES);
-      return response.data;
-    },*/
-    async fetchConferences() {
-        const response = await axios.get(API_ENDPOINT_CONFERENCES);
-        const conferences = response.data;
-        
-        // Print the names of the conferences to the console
-        conferences.forEach((conference: Conference) => {
-            //console.log(conference.name);
-        });
-
-        return conferences;
-        },
     async submitForm() {
       if (!this.newStage.name) {
         alert('Je potrebné zadať názov stage.');
         return;
       }
-      await axios.post(API_ENDPOINT, this.newStage);
+      await axios.post(SF.API_ENDPOINT_STAGES, this.newStage);
       this.newStage = {
         name: '',
         comment: '',
         conference_id: 0, // reset the conference ID
       };
-      this.stages = await this.fetchStages();
+      this.stages = await SF.fetchStageData();
     },
     editStage(stage: Stage) {
   this.editingStage = { ...stage };
@@ -220,9 +191,9 @@ export default defineComponent({
       }
 
       try {
-        await axios.put(`${API_ENDPOINT}/${this.editingStage.id}`, this.editingStage);
+        await axios.put(`${SF.API_ENDPOINT_STAGES}/${this.editingStage.id}`, this.editingStage);
         this.editingStage = null;
-        this.stages = await this.fetchStages();
+        this.stages = await SF.fetchStageData();
       } catch (error) {
         console.error('Failed to update stage:', error);
       }
@@ -235,8 +206,8 @@ export default defineComponent({
 
   async deleteStage(id: number) {
     try {
-      await axios.delete(`${API_ENDPOINT}/${id}`);
-      this.stages = await this.fetchStages();
+      await axios.delete(`${SF.API_ENDPOINT_STAGES}/${id}`);
+      this.stages = await SF.fetchStageData();
     } catch (error) {
       console.error('Failed to delete stage:', error);
     }

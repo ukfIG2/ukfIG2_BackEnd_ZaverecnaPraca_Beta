@@ -187,6 +187,7 @@
   import { defineComponent } from 'vue';
   import axios from 'axios';
   import { Modal } from 'bootstrap';
+  import SF from '@/assets/sharedFunctions';
 
   interface Presentation {
     id?: number;
@@ -217,11 +218,7 @@
     name: string;
     date: string;
     state: string;
-  }
-
-  const PRESENTATION_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/presentations';
-  const TIMETABLE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/time_tables';
-  const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/stages';  
+  }  
 
   export default defineComponent({
     name: 'Presentation',
@@ -266,10 +263,10 @@
     },*/
     async mounted() {
       const [presentations, timetables, stages, conferences] = await Promise.all([
-        this.fetchPresentations(),
-        this.fetchTimetables(),
-        this.fetchStages(),
-        this.fetchConferences(),
+        SF.fetchPresentationData(),
+        SF.fetchTimeTableData(),
+        SF.fetchStageData(),
+        SF.fetchConferenceData(),
       ]);
       this.presentations = presentations;
       this.timetables = timetables;
@@ -287,24 +284,6 @@
       this.editModal = new Modal(editModalElement);
     },
     methods: {
-      async fetchPresentations() {
-        const response = await axios.get(PRESENTATION_API_ENDPOINT);
-        //console.log(response.data);
-        return response.data;
-      },
-      async fetchTimetables() {
-        const response = await axios.get(TIMETABLE_API_ENDPOINT);
-        //console.log(response.data);
-        return response.data;
-      },
-      async fetchStages() {
-        const response = await axios.get(STAGE_API_ENDPOINT);
-        return response.data;
-      },
-      async fetchConferences() {
-        const response = await axios.get('http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/conferences');
-        return response.data;
-      },
       getTimeTableTime(timetableId: number) {
         const timetable = this.timetables.find(timetable => timetable.id === timetableId);
         if (timetable) {
@@ -312,18 +291,6 @@
         }
         return 'Timetable not found';
       },
-      /*getStageName(presentationId: number) {
-        const presentation = this.presentations.find(presentation => presentation.id === presentationId);
-        if (presentation) {
-          const timetable = this.timetables.find(timetable => timetable.id === presentation.time_table_id);
-          if (timetable) {
-            const stage = this.stages.find(stage => stage.id === timetable.stage_id);
-            return stage ? stage.name : 'Stage not found';
-          }
-          return 'Timetable not found';
-        }
-        return 'Presentation not found';
-      },*/
       getStageName(timetableId: number) {
         const timetable = this.timetables.find(timetable => timetable.id === timetableId);
         if (timetable) {
@@ -332,22 +299,6 @@
         }
         return 'Timetable not found';
       },
-      /*getConferenceName(presentationId: number) {
-        const presentation = this.presentations.find(presentation => presentation.id === presentationId);
-        if (presentation) {
-          const timetable = this.timetables.find(timetable => timetable.id === presentation.time_table_id);
-          if (timetable) {
-            const stage = this.stages.find(stage => stage.id === timetable.stage_id);
-            if (stage) {
-              const conference = this.conferences.find(conference => conference.id === stage.conference_id);
-              return conference ? conference.name : 'Conference not found';
-            }
-            return 'Stage not found';
-          }
-          return 'Timetable not found';
-        }
-        return 'Presentation not found';
-      },*/
       getConferenceName(timetableId: number) {
         const timetable = this.timetables.find(timetable => timetable.id === timetableId);
         if (timetable) {
@@ -360,22 +311,7 @@
         }
         return 'Timetable not found';
       },
-      /*async submitForm() {
-        const response = await axios.post(PRESENTATION_API_ENDPOINT, this.newPresentation);
-        console.log(response.data);
-        this.newPresentation = {
-          conference_id: 0,
-          time_table_id: 0,
-          name: '',
-          short_description: '',
-          long_description: '',
-          max_capacity: 0,
-          comment: '',
-        };
-        addModal: null as Modal | null;
-      },*/
       async submitForm() {
-
         if(this.newPresentation.conference_id === 0 || this.newPresentation.stage_id === 0 || this.newPresentation.time_table_id === 0){
           alert("Please select conference, stage and timetable");
           return;
@@ -389,7 +325,7 @@
           return;
         }
 
-        const response = await axios.post(PRESENTATION_API_ENDPOINT, this.newPresentation);
+        const response = await axios.post(SF.API_ENDPOINT_PRESENTATIONS, this.newPresentation);
         //console.log(response.data);
         this.newPresentation = {
           conference_id: 0,
@@ -402,7 +338,7 @@
           comment: '',
         };
         this.addModal?.hide();
-        this.presentations = await this.fetchPresentations();
+        this.presentations = await SF.fetchPresentationData();
 
       },
       async submitEditForm() {
@@ -421,7 +357,7 @@
 /*         console.log("tototototk");
         console.log(this.editingPresentation); */
 
-        const response = await axios.put(`${PRESENTATION_API_ENDPOINT}/${this.editingPresentation.id}`, this.editingPresentation);
+        const response = await axios.put(`${SF.API_ENDPOINT_PRESENTATIONS}/${this.editingPresentation.id}`, this.editingPresentation);
         //console.log(response.data);
         this.editingPresentation = {
           id: 0,
@@ -435,7 +371,7 @@
           comment: '',
         };
         this.editModal?.hide();
-        this.presentations = await this.fetchPresentations();
+        this.presentations = await SF.fetchPresentationData();
 
       },
       editPresentation(presentation: Presentation){
@@ -469,8 +405,8 @@
         //console.log(this.editingPresentation);
       },
       async deleteTimetable(timetableId: number) {
-        await axios.delete(`${PRESENTATION_API_ENDPOINT}/${timetableId}`);
-        this.presentations = await this.fetchPresentations();
+        await axios.delete(`${SF.API_ENDPOINT_PRESENTATIONS}/${timetableId}`);
+        this.presentations = await SF.fetchPresentationData();
       },
     },
     computed: {

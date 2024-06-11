@@ -142,6 +142,7 @@
   import axios from 'axios';
   import { Modal } from 'bootstrap';
   import { watch } from 'vue';
+  import SF from '@/assets/sharedFunctions';
   
   interface Timetable {
     id: number;
@@ -162,9 +163,6 @@
     name: string;
     date: string;
     }
-  
-const TIMETABLE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/time_tables';
-const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/stages';  
 
   export default defineComponent({
     name: 'Timetable',
@@ -202,27 +200,12 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
       this.addModal = new Modal(addModalElement);
       this.editModal = new Modal(editModalElement);
   
-      this.timetables = await this.fetchTimetables();
-      this.stages = await this.fetchStages();
-      this.conferences = await this.fetchConferences();
+      this.timetables = await SF.fetchTimeTableData();
+      this.stages = await SF.fetchStageData();
+      this.conferences = await SF.fetchConferenceData();
       
     },
     methods: {
-    async fetchTimetables() {
-      const response = await axios.get(TIMETABLE_API_ENDPOINT);
-        //console.log(response.data);
-      return response.data;
-    },
-    async fetchStages() {
-      const response = await axios.get(STAGE_API_ENDPOINT);
-      //console.log(response.data);
-      return response.data;
-    },
-    async fetchConferences() {
-      const response = await axios.get('http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/conferences');
-      //console.log(response.data); // Log the response data
-      return response.data;
-    },
     getConferenceName(stageId: number) {
       const stage = this.stages.find(stage => stage.id === stageId);
       if (!stage) {
@@ -240,7 +223,7 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
           alert('Please fill in all required fields.');
           return;
         }
-        await axios.post(TIMETABLE_API_ENDPOINT, this.newTimetable);
+        await axios.post(SF.API_ENDPOINT_TIME_TABLES, this.newTimetable);
         //await axios.post(STAGE_API_ENDPOINT, this.newTimetable);
         this.newTimetable = {
           //conference_id: 0,
@@ -249,7 +232,7 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
           time_end: '',
           comment: '',
         };
-        this.timetables = await this.fetchTimetables();
+        this.timetables = await SF.fetchTimeTableData();
         console.log("totok" + this.timetables);
       },
       editTimetable(timetable: Timetable) {
@@ -271,8 +254,8 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
         this.editingTimetable.stage_id = this.newTimetable.stage_id;
 
         try {
-          await axios.put(`${TIMETABLE_API_ENDPOINT}/${this.editingTimetable.id}`, this.editingTimetable);
-          this.timetables = await this.fetchTimetables();
+          await axios.put(`${SF.API_ENDPOINT_TIME_TABLES}/${this.editingTimetable.id}`, this.editingTimetable);
+          this.timetables = await SF.fetchTimeTableData();
         } catch (error) {
           console.error('Failed to update timetable:', error);
         }
@@ -280,8 +263,8 @@ const STAGE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikác
       },
       async deleteTimetable(id: number) {
         try {
-          await axios.delete(`${TIMETABLE_API_ENDPOINT}/${id}`);
-          this.timetables = await this.fetchTimetables();
+          await axios.delete(`${SF.API_ENDPOINT_TIME_TABLES}/${id}`);
+          this.timetables = await SF.fetchTimeTableData();
         } catch (error) {
           console.error('Failed to delete timetable:', error);
         }
