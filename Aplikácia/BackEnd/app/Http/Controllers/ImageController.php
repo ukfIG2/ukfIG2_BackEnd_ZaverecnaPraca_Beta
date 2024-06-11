@@ -220,4 +220,18 @@ class ImageController extends Controller
         return response()->json(['message' => 'Image updated successfully'], 200);
     }
 
+    public function show($id)
+    {
+        $image = Image::find($id);
+
+        if (!$image) {
+            return response()->json(['message' => 'Image not found'], 404);
+        }
+
+        // Return only the 'alt' and 'path_to' attributes
+        return response()->json([
+            'alt' => $image->alt,
+            'path_to' => $image->path_to
+        ], 200);
+    }
 }

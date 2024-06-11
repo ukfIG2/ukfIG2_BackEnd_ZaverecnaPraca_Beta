@@ -107,8 +107,8 @@
                 <th scope="col">Conference</th>
                 <th scope="col">Name</th>
                 <th scope="col">URL</th>
-<!--                 <th scope="col">Image</th>
- -->                <th scope="col">Comment</th>
+                <th scope="col">Image</th>
+                <th scope="col">Comment</th>
                 <th scope="col">Actions</th>
                 </tr>
             </thead>
@@ -119,7 +119,17 @@
                 <td>{{ getConferenceName(sponsor.conference_id) }}</td>
                 <td>{{ sponsor.name }}</td>
                 <td><a :href="sponsor.url" target="_blank">{{ sponsor.url }}</a></td>
-                <!-- <td><img :src="sponsor.image" alt="Sponsor Image" width="50" height="50"></td> -->
+                <td>
+                    <div v-if="sponsor.image_id && images[sponsor.image_id]">
+                        <img :src="'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/storage/' + images[sponsor.image_id].path_to" 
+                            :alt="images[sponsor.image_id].alt" 
+                            width="100" 
+                            height="100">
+                    </div>
+                    <div v-else class="text-danger fw-bold">
+                        NO_IMAGE_SELECTED
+                    </div>
+                </td>
                 <td>{{ sponsor.comment }}</td>
                 <td>
                     <button class="btn btn-primary m-2" @click="editSponsor(sponsor)">Edit Sponsor</button>
@@ -162,6 +172,7 @@
     data() {
       return {
         sponsors: [] as Sponsor[],
+        images: {} as Record<string, {alt: string, path_to: string}>,
         conferences: [] as Conference[],
         newSponsor: {
             conference_id: 0,
@@ -193,6 +204,15 @@
         this.conferences = conferences;
         console.log(this.sponsors);
 
+        //
+        // Fetch the image data for each sponsor
+        for (const sponsor of sponsors) {
+        if (sponsor.image_id) {
+            this.images[sponsor.image_id] = await this.fetchImage(parseInt(sponsor.image_id));
+            }
+        }
+        //
+
         const addModalElement = document.getElementById('sponsorModal');
         const editModalElement = document.getElementById('editSponsorModal');
 
@@ -220,6 +240,10 @@
       getConferenceName(conferenceId: number) {
         const conference = this.conferences.find(conference => conference.id === conferenceId);
         return conference ? conference.name : 'Conference not found';
+      },
+      async fetchImage(id: number) {
+        const response = await axios.get(`http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/images/${id}`);
+        return response.data;
       },
       async addSponsor() {
 

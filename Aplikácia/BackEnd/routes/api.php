@@ -99,3 +99,4 @@ Route::post('/upload', [ImageController::class, 'upload']);
 Route::get('/images', [ImageController::class, 'index']);
 Route::delete('/images/{id}', [ImageController::class, 'delete']);
 Route::put('/images/{id}', [ImageController::class, 'update']);
+Route::get('/images/{id}', [ImageController::class, 'show']);
