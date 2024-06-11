@@ -4,6 +4,46 @@
             Add Sponsor
         </button>
 
+        <!-- Image Selection Modal -->
+        <div class="modal fade" id="imageSelectionModal" tabindex="-1" aria-labelledby="imageSelectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageSelectionModalLabel">Select Image</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                <thead>
+                    <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Alt</th>
+                    <th scope="col">Comment</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="image in images" :key="image.id">
+                    <th scope="row">{{ image.id }}</th>
+                    <td>{{ image.name }}</td>
+                    <td>{{ image.alt }}</td>
+                    <td>{{ image.comment }}</td>
+                    <td>
+                        <img :src="'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplik%C3%A1cia/BackEnd/public/storage/' + image.path_to" alt="" width="100" height="100">                        
+                    </td>
+                    <td>
+                        <button class="btn btn-primary m-2" @click="selectImage(image.id)">Select</button> <!-- Add this line -->
+                    </td>
+                    </tr>
+                </tbody>    
+                </table>
+            </div>
+            </div>
+        </div>
+        </div>
+
         <!-- Modal for adding a new sponsor -->
         <div class="modal fade" id="sponsorModal" tabindex="-1" aria-labelledby="sponsorModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -33,10 +73,19 @@
                     <label for="url" class="form-label">URL</label>
                     <input type="url" class="form-control" id="url" v-model="newSponsor.url" required/>
                 </div>
+
                 <div class="mb-3">
-                    <label for="image" class="form-label">Image</label>
-                    <input type="text" class="form-control" id="image" v-model="newSponsor.image" required/>
-                </div>
+                    <label for="imageId" class="form-label">Image ID</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="imageId" v-model="selectedImageId" readonly>
+                        <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#imageSelectionModal"> -->
+                        <button type="button" class="btn btn-primary" @click="openImageSelectionModal">
+
+                        Select Image
+                        </button>
+                    </div>
+                    </div>
+
                 <div class="mb-3">
                     <label for="comment" class="form-label">Comment</label>
                     <input type="text" class="form-control" id="comment" v-model="newSponsor.comment" placeholder="Add comment">
@@ -81,7 +130,7 @@
                           </div>
                           <div class="mb-3">
                               <label for="image" class="form-label">Image</label>
-                              <input type="text" class="form-control" id="image" v-model="editingSponsor.image" required/>
+                              <input type="text" class="form-control" id="image" v-model="editingSponsor.image_id" required/>
                           </div>
                           <div class="mb-3">
                               <label for="comment" class="form-label">Comment</label>
@@ -120,11 +169,13 @@
                 <td>{{ sponsor.name }}</td>
                 <td><a :href="sponsor.url" target="_blank">{{ sponsor.url }}</a></td>
                 <td>
-                    <div v-if="sponsor.image_id && images[sponsor.image_id]">
-                        <img :src="'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/storage/' + images[sponsor.image_id].path_to" 
-                            :alt="images[sponsor.image_id].alt" 
+                    <div v-if="sponsor.image_id">
+                        <div v-for="image in getSponsorImages(sponsor.image_id)" v-if="sponsor.image_id">
+                        <img :src="'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/storage/' + image.path_to" 
+                            :alt="image.alt" 
                             width="100" 
                             height="100">
+                        </div>
                     </div>
                     <div v-else class="text-danger fw-bold">
                         NO_IMAGE_SELECTED
@@ -153,7 +204,7 @@
     conference_id: number;
     name: string;
     url: string;
-    image_id: string;
+    image_id: number;
     comment: string;
   }
 
@@ -164,6 +215,14 @@
     state: string;
   }
 
+  interface Image {
+    id: number;
+    name: string;
+    alt: string;
+    path_to: string;
+    comment: string;
+  }
+
   const SPONSOR_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/sponsors';
   const CONFERENCE_API_ENDPOINT = 'http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/conferences';
 
@@ -172,13 +231,14 @@
     data() {
       return {
         sponsors: [] as Sponsor[],
-        images: {} as Record<string, {alt: string, path_to: string}>,
+        images: [] as Image[],
         conferences: [] as Conference[],
+        selectedImageId: null as number | null,
         newSponsor: {
             conference_id: 0,
             name: '',
             url: '',
-            image: '',
+            image_id: 0,
             comment: ''
         },
         editingSponsor: {
@@ -186,13 +246,12 @@
             conference_id: 0,
             name: '',
             url: '',
-            image: '',
+            image_id: 0,
             comment: ''
         },
         addModal: null as Modal | null,
         editModal: null as Modal | null,
-
-
+        imageSelectionModal: null as Modal | null
       };
     },
     async mounted() {
@@ -203,18 +262,14 @@
         this.sponsors = sponsors;
         this.conferences = conferences;
         console.log(this.sponsors);
-
-        //
-        // Fetch the image data for each sponsor
-        for (const sponsor of sponsors) {
-        if (sponsor.image_id) {
-            this.images[sponsor.image_id] = await this.fetchImage(parseInt(sponsor.image_id));
-            }
-        }
-        //
-
+        this.images = await this.fetchImages();
+        console.log(this.images);
         const addModalElement = document.getElementById('sponsorModal');
         const editModalElement = document.getElementById('editSponsorModal');
+        const imageSelectionModalElement = document.getElementById('imageSelectionModal');
+        if(!imageSelectionModalElement) {
+            throw new Error('Modal elements not found');
+        }
 
         if(!addModalElement || !editModalElement) {
             throw new Error('Modal elements not found');
@@ -241,10 +296,60 @@
         const conference = this.conferences.find(conference => conference.id === conferenceId);
         return conference ? conference.name : 'Conference not found';
       },
-      async fetchImage(id: number) {
-        const response = await axios.get(`http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/images/${id}`);
-        return response.data;
-      },
+      openImageSelectionModal() {
+
+        const sponsorModalElement = document.getElementById('sponsorModal');
+        if (sponsorModalElement) {
+            const sponsorModal = Modal.getInstance(sponsorModalElement);
+            if (sponsorModal) {
+                sponsorModal.hide();
+            }
+        }
+
+        const imageSelectionModalElement = document.getElementById('imageSelectionModal');
+        if (imageSelectionModalElement) {
+            const imageSelectionModal = new Modal(imageSelectionModalElement);
+            imageSelectionModal.show();
+        }
+    },
+      async fetchImages() {
+        const response = await axios.get('http://localhost/ukfIG2_ZaverecnaPraca_Beta/Aplikácia/BackEnd/public/api/images');
+        return response.data as Image[];
+        },
+        getSponsorImages(sponsorId: number) {
+            //const sponsorIdNumber: number = parseInt(sponsorId);
+            return this.images.filter(image => image.id === sponsorId);
+        },
+        selectImage(imageId: number) {
+  // Store the selected image ID
+  this.selectedImageId = imageId;
+  this.newSponsor.image_id = imageId;
+
+
+  // Close the "Select Image" modal
+  const imageSelectionModalElement = document.getElementById('imageSelectionModal');
+  if (imageSelectionModalElement) {
+    const imageSelectionModal = Modal.getInstance(imageSelectionModalElement);
+    if (imageSelectionModal) {
+      imageSelectionModal.hide();
+    }
+  }
+
+    // Manually remove the modal backdrop
+    /*const modalBackdrop = document.querySelector('.modal-backdrop');
+if (modalBackdrop) {
+  modalBackdrop.remove();
+}*/
+
+  // Reopen the "Add Sponsor" modal after a short delay to ensure the "Select Image" modal has closed
+  setTimeout(() => {
+    const sponsorModalElement = document.getElementById('sponsorModal');
+    if (sponsorModalElement) {
+      const sponsorModal = new Modal(sponsorModalElement);
+      sponsorModal.show();
+    }
+  }, 500);
+},
       async addSponsor() {
 
         if(this.newSponsor.conference_id === 0) {
@@ -257,14 +362,21 @@
             return;
         }
 
+          // Check if an image has been selected
+            if (this.newSponsor.image_id === 0) {
+                alert('Please select an image');
+                return;
+            }
+
         const response = await axios.post(SPONSOR_API_ENDPOINT, this.newSponsor);
         this.newSponsor = {
             conference_id: 0,
             name: '',
             url: '',
-            image: '',
+            image_id: 0,
             comment: ''
         };
+        console.log(this.newSponsor.image_id);
         this.addModal?.hide();
         this.sponsors = await this.fetchSponsors();
       },
@@ -285,7 +397,7 @@
             conference_id: 0,
             name: '',
             url: '',
-            image: '',
+            image_id: 0,
             comment: ''
         };
         this.editModal?.hide();
@@ -303,7 +415,7 @@
             conference_id: sponsor.conference_id,
             name: sponsor.name,
             url: sponsor.url,
-            image: sponsor.image_id,
+            image_id: sponsor.image_id,
             comment: sponsor.comment
         };
 

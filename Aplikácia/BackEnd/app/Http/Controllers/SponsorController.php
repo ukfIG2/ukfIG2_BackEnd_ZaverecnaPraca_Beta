@@ -19,6 +19,7 @@ class SponsorController extends Controller
             'name' => 'required',
             'conference_id' => 'required',
             'url' => 'nullable',
+            'image_id' => 'nullable', 
             'comment' => 'nullable',
         ]);
 
@@ -27,6 +28,7 @@ class SponsorController extends Controller
             'conference_id' => $request->get('conference_id'),
             'url' => $request->get('url'),
             'comment' => $request->get('comment'),
+            'image_id' => $request->get('image_id'),
         ]);
 
         $sponsor->save();
@@ -57,6 +59,7 @@ class SponsorController extends Controller
         $sponsor->conference_id = $request->get('conference_id');
         $sponsor->url = $request->get('url');
         $sponsor->comment = $request->get('comment');
+        $sponsor->image_id = $request->get('image_id');
 
         $sponsor->save();
 
