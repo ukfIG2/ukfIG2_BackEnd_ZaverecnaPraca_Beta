@@ -2064,12 +2064,14 @@ class ForExamTest extends TestCase
 
         $file1 = new UploadedFile(base_path('tests/images/01.jpg'), '01.jpg', 'image/jpeg', null, true);
         $file2 = new UploadedFile(base_path('tests/images/02.jpg'), '02.jpg', 'image/jpeg', null, true);
+        $file6 = new UploadedFile(base_path('tests/images/06.png'), '06.png', 'image/jpeg', null, true);
+        $file7 = new UploadedFile(base_path('tests/images/07.png'), '07.png', 'image/jpeg', null, true);
 
         $response = $this->json('POST', '/api/upload', [
-            'images' => [$file1, $file2],
-            'names' => ['test1.jpg', 'test2.jpg'],
-            'alts' => ['alt1', 'alt2'],
-            'comments' => ['comment1', 'comment2']
+            'images' => [$file1, $file2, $file6, $file7],
+            'names' => ['test1.jpg', 'test2.jpg', 'test_sponsor6.png', 'test_sponsor7.png'],
+            'alts' => ['alt1', 'alt2', 'alt_sponsor6', 'alt_sponsor7'],
+            'comments' => ['comment1', 'comment2', 'comment_sponsor6', 'comment_sponsor7']
         ]);
         
         $response->dump(); // Print the response to the console
@@ -2077,13 +2079,12 @@ class ForExamTest extends TestCase
         $response->assertStatus(201)
                  ->assertJson(['message' => 'Images Uploaded Successfully.']);
 
-        $response->dump(); // Print the response to the console
-
-        
-        
+        //$response->dump(); // Print the response to the console
 
         $this->assertTrue(Storage::disk('public')->exists('images/test1.jpg'));
         $this->assertTrue(Storage::disk('public')->exists('images/test2.jpg'));
+        $this->assertTrue(Storage::disk('public')->exists('images/test_sponsor6.png'));
+        $this->assertTrue(Storage::disk('public')->exists('images/test_sponsor7.png'));
     }
 
     public function test_Image_NoImages()
@@ -2094,7 +2095,7 @@ class ForExamTest extends TestCase
             'comments' => ['comment1', 'comment2']
         ]);
 
-        $response->dump(); // Print the response to the console
+        //$response->dump(); // Print the response to the console
 
         $response->assertStatus(400)
                  ->assertJson(['message' => 'No files uploaded.']);
