@@ -1,6 +1,4 @@
 <template>
-  <Navbar />
-
   <Carousel />
   <AboutSection />
   <Speakers />
@@ -8,8 +6,6 @@
   <Testimonial />
   <Sponsors />
   <ContactArea />
-
-  <FooterArea />
 </template>
 
 <script>
@@ -21,15 +17,11 @@ import ScheduleArea from "@/components/ScheduleArea.vue";
 import Testimonial from "@/components/Testimonial.vue";
 import Sponsors from "@/components/Sponsors.vue";
 import ContactArea from "@/components/ContactArea.vue";
-import Navbar from "@/components/Navbar.vue";
-import FooterArea from '@/components/FooterArea.vue';
 
 
 export default {
   name: 'HomeView',
   components: {
-    Navbar,
-
     ContactArea,
     Testimonial,
     ScheduleArea,
@@ -37,8 +29,6 @@ export default {
     AboutSection,
     Carousel,
     Sponsors,
-
-    FooterArea,
   }
 }
 </script>
